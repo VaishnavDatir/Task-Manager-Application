@@ -1,0 +1,97 @@
+import 'package:flutter/foundation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:wowtask/core/routing/route_names.dart';
+import 'package:wowtask/core/widgets/error_screen.dart';
+import 'package:wowtask/features/auth/view/login_screen.dart';
+import 'package:wowtask/features/auth/view/signup_screen.dart';
+import 'package:wowtask/features/auth/view/welcome_screen.dart';
+import 'package:wowtask/features/splash/view/splash_screen.dart';
+
+import '../storage/app_preferences.dart';
+import 'app_routes.dart';
+import 'guards/auth_guard.dart';
+
+/// Global singleton router to prevent rebuild resets.
+class AppRouter {
+  static GoRouter? _router;
+
+  static GoRouter createRouter(AppPreferences prefs) {
+    if (_router != null) return _router!;
+
+    final authGuard = AuthGuard(prefs);
+
+    _router = GoRouter(
+      debugLogDiagnostics: kDebugMode, // useful during development
+      initialLocation: AppRoutes.splash,
+      routes: [
+        ..._splashRoutes,
+        ..._authRoutes,
+        ..._homeRoutes,
+        ..._errorRoutes,
+      ],
+      redirect: authGuard.checkAuth,
+      errorBuilder: (context, state) => const ErrorScreen(),
+    );
+
+    return _router!;
+  }
+
+  /// Splash routes
+  static final List<GoRoute> _splashRoutes = [
+    GoRoute(
+      path: AppRoutes.splash,
+      name: RouteNames.splash,
+      builder: (context, state) => const SplashScreen(),
+    ),
+  ];
+
+  /// Authentication related routes
+  static final List<GoRoute> _authRoutes = [
+    GoRoute(
+      path: AppRoutes.welcome,
+      name: RouteNames.welcome,
+      builder: (context, state) => const WelcomeScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.login,
+      name: RouteNames.login,
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.register,
+      name: RouteNames.register,
+      builder: (context, state) => const SignupScreen(),
+    ),
+  ];
+
+  /// App routes after login (Home, Profile, TaskDetail, etc.)
+  static final List<GoRoute> _homeRoutes = [
+    // GoRoute(
+    //   path: AppRoutes.home,
+    //   name: RouteNames.home,
+    //   builder: (context, state) => const HomePage(),
+    // ),
+    // GoRoute(
+    //   path: AppRoutes.profile,
+    //   name: RouteNames.profile,
+    //   builder: (context, state) => const ProfilePage(),
+    // ),
+    // GoRoute(
+    //   path: AppRoutes.taskDetail,
+    //   name: RouteNames.taskDetail,
+    //   builder: (context, state) {
+    //     final id = state.pathParameters['id']!;
+    //     return TaskDetailPage(taskId: id);
+    //   },
+    // ),
+  ];
+
+  /// Error and fallback routes
+  static final List<GoRoute> _errorRoutes = [
+    GoRoute(
+      path: AppRoutes.error,
+      name: RouteNames.error,
+      builder: (context, state) => const ErrorScreen(),
+    ),
+  ];
+}
