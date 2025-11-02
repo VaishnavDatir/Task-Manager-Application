@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/widgets/wow_task_logo.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/wow_task_logo.dart';
 import '../view_model/splash_view_model.dart';
 
 class SplashScreen extends StatelessWidget {

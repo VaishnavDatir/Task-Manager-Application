@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/routing/app_navigator.dart';
 
+import '../../../core/routing/app_navigator.dart';
 import '../view_model/auth_viewmodel.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -169,7 +169,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: theme.textTheme.bodyMedium,
                     ),
                     TextButton(
-                      onPressed: () => AppNavigator.goBack(context),
+                      onPressed: () => AppNavigator.goBack(),
                       child: const Text("Login"),
                     ),
                   ],

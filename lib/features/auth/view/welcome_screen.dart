@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:wowtask/core/routing/app_navigator.dart';
-import 'package:wowtask/core/routing/route_names.dart';
 
 import '../../../core/constants/app_assets.dart';
+import '../../../core/routing/app_navigator.dart';
+import '../../../core/routing/route_names.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -60,15 +61,15 @@ class WelcomeScreen extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black54,
-                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.grey.shade300,
+                          foregroundColor: Colors.black,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         onPressed: () {
-                          AppNavigator.pushToNamed(context, RouteNames.login);
+                          AppNavigator.pushToNamed(RouteNames.login);
                         },
                         child: const Text("LOG IN"),
                       ),
@@ -78,6 +79,8 @@ class WelcomeScreen extends StatelessWidget {
                       "Don't have an account?",
                       style: TextStyle(color: Colors.white),
                     ),
+                    const SizedBox(height: AppSpacing.sm),
+
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -90,10 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          AppNavigator.pushToNamed(
-                            context,
-                            RouteNames.register,
-                          );
+                          AppNavigator.pushToNamed(RouteNames.register);
                         },
                         child: const Text("SIGN UP"),
                       ),

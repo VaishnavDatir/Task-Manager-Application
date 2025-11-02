@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:wowtask/core/routing/app_navigator.dart';
-import 'package:wowtask/core/routing/route_names.dart';
 
 import '../constants/app_strings.dart';
+import '../routing/app_navigator.dart';
+import '../routing/route_names.dart';
 import '../theme/app_colors.dart';
 
 class ErrorScreen extends StatelessWidget {
   final FlutterErrorDetails? details;
 
-  const ErrorScreen({Key? key, this.details}) : super(key: key);
+  const ErrorScreen({super.key, this.details});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class ErrorScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  AppNavigator.goToNamed(context, RouteNames.splash);
+                  AppNavigator.goToNamed(RouteNames.splash);
                 },
                 icon: const Icon(Icons.refresh_rounded, color: Colors.white),
                 label: Text(

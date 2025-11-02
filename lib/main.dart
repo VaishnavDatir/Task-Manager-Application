@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/di/app_providers.dart';
 
 import 'core/config/app_initializer.dart';
 import 'core/constants/app_strings.dart';
+import 'core/di/app_providers.dart';
 import 'core/routing/app_router.dart';
 import 'core/storage/app_preferences.dart';
 import 'core/theme/app_theme.dart';
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       title: AppStrings.appName,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       routerConfig: router,
       builder: (context, child) {
         // Centralized error handling

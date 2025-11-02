@@ -1,15 +1,20 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wowtask/core/routing/route_names.dart';
-import 'package:wowtask/core/widgets/error_screen.dart';
-import 'package:wowtask/features/auth/view/login_screen.dart';
-import 'package:wowtask/features/auth/view/signup_screen.dart';
-import 'package:wowtask/features/auth/view/welcome_screen.dart';
-import 'package:wowtask/features/splash/view/splash_screen.dart';
 
+import '../../features/auth/view/login_screen.dart';
+import '../../features/auth/view/signup_screen.dart';
+import '../../features/auth/view/welcome_screen.dart';
+import '../../features/home/view/home_screen.dart';
+import '../../features/splash/view/splash_screen.dart';
 import '../storage/app_preferences.dart';
+import '../widgets/error_screen.dart';
 import 'app_routes.dart';
 import 'guards/auth_guard.dart';
+import 'route_names.dart';
+
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 
 /// Global singleton router to prevent rebuild resets.
 class AppRouter {
@@ -21,7 +26,8 @@ class AppRouter {
     final authGuard = AuthGuard(prefs);
 
     _router = GoRouter(
-      debugLogDiagnostics: kDebugMode, // useful during development
+      navigatorKey: rootNavigatorKey,
+      debugLogDiagnostics: kDebugMode, 
       initialLocation: AppRoutes.splash,
       routes: [
         ..._splashRoutes,
@@ -66,11 +72,11 @@ class AppRouter {
 
   /// App routes after login (Home, Profile, TaskDetail, etc.)
   static final List<GoRoute> _homeRoutes = [
-    // GoRoute(
-    //   path: AppRoutes.home,
-    //   name: RouteNames.home,
-    //   builder: (context, state) => const HomePage(),
-    // ),
+    GoRoute(
+      path: AppRoutes.home,
+      name: RouteNames.home,
+      builder: (context, state) => const HomeScreen(),
+    ),
     // GoRoute(
     //   path: AppRoutes.profile,
     //   name: RouteNames.profile,

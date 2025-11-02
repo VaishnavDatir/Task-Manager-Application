@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/routing/app_navigator.dart';
-import 'package:wowtask/core/routing/route_names.dart';
 
+import '../../../core/routing/app_navigator.dart';
+import '../../../core/routing/route_names.dart';
 import '../view_model/auth_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,6 +16,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthViewModel>().clearError();
+    });
+  }
 
   @override
   void dispose() {
@@ -52,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "Welcome Back 👋",
+                  "Welcome Back",
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -66,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // 🔹 Login Form
+                //  Login Form
                 Form(
                   key: _formKey,
                   child: Column(
@@ -121,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // 🔹 Error message
+                // Error message
                 if (authVM.errorMessage != null)
                   Text(
                     authVM.errorMessage!,
@@ -130,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 32),
 
-                // 🔹 Signup Navigation
+                //  Signup Navigation
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -139,10 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: theme.textTheme.bodyMedium,
                     ),
                     TextButton(
-                      onPressed: () => AppNavigator.pushToNamed(
-                        context,
-                        RouteNames.register,
-                      ),
+                      onPressed: () =>
+                          AppNavigator.pushToNamed(RouteNames.register),
                       child: const Text("Sign Up"),
                     ),
                   ],

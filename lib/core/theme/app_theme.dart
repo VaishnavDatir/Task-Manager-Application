@@ -13,7 +13,6 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        background: AppColors.background,
         surface: AppColors.surface,
         error: AppColors.error,
       ),
@@ -65,7 +64,6 @@ class AppTheme {
       colorScheme: const ColorScheme.dark().copyWith(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        background: AppColors.darkBackground,
         surface: AppColors.darkSurface,
       ),
       textTheme: AppTypography.textTheme(Brightness.dark),

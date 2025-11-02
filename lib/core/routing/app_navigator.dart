@@ -1,52 +1,21 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wowtask/core/routing/app_routes.dart';
 
-/// A clean, centralized navigator for type-safe routing.
-/// Keeps ViewModels & Widgets free from context.go() repetition.
+import 'app_router.dart'; // to access rootNavigatorKey
+import 'app_routes.dart';
+
 class AppNavigator {
   AppNavigator._();
-  static void goTo(BuildContext context, String appRoute) {
-    context.go(appRoute);
-  }
 
-  static void goToNamed(BuildContext context, String routeName) {
-    context.goNamed(routeName);
-  }
+  static GoRouter get _router => GoRouter.of(rootNavigatorKey.currentContext!);
 
-  static void pushToNamed(BuildContext context, String routeName) {
-    context.pushNamed(routeName);
-  }
-
-  /// Splash → Home
-  static void goToHome(BuildContext context) {
-    context.go(AppRoutes.home);
-  }
-
-  /// Splash → Login
-  static void goToLogin(BuildContext context) {
-    context.go(AppRoutes.login);
-  }
-
-  /// Any page → Profile
-  static void goToProfile(BuildContext context) {
-    context.push(AppRoutes.profile);
-  }
-
-  /// Navigate to specific Task Details
-  static void goToTaskDetail(BuildContext context, String id) {
-    context.push(AppRoutes.taskDetail.replaceAll(':id', id));
-  }
-
-  /// Back navigation
-  static void goBack(BuildContext context) {
-    if (context.canPop()) {
-      context.pop();
-    }
-  }
-
-  /// Show generic error page
-  static void goToError(BuildContext context) {
-    context.go(AppRoutes.error);
-  }
+  static void goTo(String route) => _router.go(route);
+  static void goToNamed(String name) => _router.goNamed(name);
+  static void pushToNamed(String name) => _router.pushNamed(name);
+  static void goToHome() => goTo(AppRoutes.home);
+  static void goToLogin() => goTo(AppRoutes.login);
+  static void goToProfile() => _router.push(AppRoutes.profile);
+  static void goToTaskDetail(String id) =>
+      _router.push(AppRoutes.taskDetail.replaceAll(':id', id));
+  static void goBack() => _router.pop();
+  static void goToError() => goTo(AppRoutes.error);
 }

@@ -1,5 +1,6 @@
 /// Centralized place for managing all asset paths in the app.
 /// Keeps code clean and prevents typos or hard-coded paths.
+library;
 
 class AppAssets {
   //  Image Assets

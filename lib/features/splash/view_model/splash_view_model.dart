@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:wowtask/core/routing/route_names.dart';
-import 'package:wowtask/core/utils/logger.dart';
 
 import '../../../core/routing/app_navigator.dart';
+import '../../../core/routing/route_names.dart';
 import '../../../core/storage/app_preferences.dart';
+import '../../../core/utils/logger.dart';
 
 class SplashViewModel extends ChangeNotifier {
   final AppPreferences _prefs;
@@ -18,9 +18,9 @@ class SplashViewModel extends ChangeNotifier {
 
     if (context.mounted) {
       if (isLoggedIn) {
-        AppNavigator.goToHome(context);
+        AppNavigator.goToHome();
       } else {
-        AppNavigator.goToNamed(context, RouteNames.welcome);
+        AppNavigator.goToNamed(RouteNames.welcome);
       }
     }
   }

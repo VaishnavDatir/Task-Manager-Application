@@ -6,12 +6,16 @@ import '../models/user_model.dart';
 /// Handles all authentication-related API calls or logic.
 /// Currently simulates mock API behavior — can be replaced later with real API integration.
 class AuthRepository {
+  UserModel? _currentUser;
+
+  UserModel? get currentUser => _currentUser;
+
   /// Simulated login method
-  Future<UserModel> login(String email, String password) async {
+  Future<UserModel?> login(String email, String password) async {
     await Future.delayed(const Duration(seconds: 2)); // simulate network delay
 
     if (email == 'test@demo.com' && password == '1234') {
-      return UserModel(
+      _currentUser = UserModel(
         id: '1',
         fullName: 'Vaishnav Datir',
         email: email,
@@ -22,6 +26,7 @@ class AuthRepository {
         updatedAt: DateTime.now(),
         isActive: true,
       );
+      return _currentUser;
     } else {
       throw AuthException(
         'Invalid credentials. Please check your email or password.',
