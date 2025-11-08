@@ -7,7 +7,7 @@ class UserModel {
   final String email;
   final String phone;
   final String? profileImage;
-  final String? role; // e.g., "student", "admin", etc.
+  final String? role;  
   final DateTime createdAt;
   final DateTime? updatedAt;
   final bool isActive;
@@ -24,7 +24,7 @@ class UserModel {
     this.isActive = true,
   });
 
-  /// ✅ Converts JSON to UserModel
+  ///  Converts JSON to UserModel
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] ?? '',
@@ -56,7 +56,7 @@ class UserModel {
     };
   }
 
-  /// ✅ Copy with new values (immutable pattern)
+  ///  Copy with new values (immutable pattern)
   UserModel copyWith({
     String? id,
     String? fullName,

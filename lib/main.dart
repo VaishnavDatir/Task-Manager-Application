@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access dependencies through Provider
     final prefs = context.read<AppPreferences>();
     final router = AppRouter.createRouter(prefs);
 
@@ -33,12 +32,10 @@ class MyApp extends StatelessWidget {
       title: AppStrings.appName,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       routerConfig: router,
       builder: (context, child) {
-        // Centralized error handling
         ErrorWidget.builder = (details) => ErrorScreen(details: details);
-
         final mediaQuery = MediaQuery.of(context);
         return MediaQuery(
           data: mediaQuery.copyWith(textScaler: const TextScaler.linear(1.0)),

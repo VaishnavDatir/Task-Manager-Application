@@ -26,13 +26,13 @@ class WelcomeScreen extends StatelessWidget {
               children: [
                 const SizedBox(height: 40),
 
-                // 🖼 Illustration
+                //  Illustration
                 SizedBox(
                   height: size.height * 0.4,
                   child: SvgPicture.asset(AppAssets.svgSignInWhite),
                 ),
 
-                // ✍ Text section
+                // Text section
                 Column(
                   children: [
                     Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wowtask/features/task/view/create_task_screen.dart';
 
 import '../../features/auth/view/login_screen.dart';
 import '../../features/auth/view/signup_screen.dart';
@@ -33,9 +34,10 @@ class AppRouter {
         ..._splashRoutes,
         ..._authRoutes,
         ..._homeRoutes,
+        ..._taskRoutes,
         ..._errorRoutes,
       ],
-      redirect: authGuard.checkAuth,
+      // redirect: authGuard.checkAuth,
       errorBuilder: (context, state) => const ErrorScreen(),
     );
 
@@ -77,19 +79,15 @@ class AppRouter {
       name: RouteNames.home,
       builder: (context, state) => const HomeScreen(),
     ),
-    // GoRoute(
-    //   path: AppRoutes.profile,
-    //   name: RouteNames.profile,
-    //   builder: (context, state) => const ProfilePage(),
-    // ),
-    // GoRoute(
-    //   path: AppRoutes.taskDetail,
-    //   name: RouteNames.taskDetail,
-    //   builder: (context, state) {
-    //     final id = state.pathParameters['id']!;
-    //     return TaskDetailPage(taskId: id);
-    //   },
-    // ),
+  ];
+
+  /// App routes after login (Home, Profile, TaskDetail, etc.)
+  static final List<GoRoute> _taskRoutes = [
+    GoRoute(
+      path: AppRoutes.createTask,
+      name: RouteNames.createTask,
+      builder: (context, state) => const CreateTaskScreen(),
+    ),
   ];
 
   /// Error and fallback routes
