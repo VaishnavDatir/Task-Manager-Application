@@ -1,11 +1,15 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:wowtask/core/routing/app_navigator.dart';
-import 'package:wowtask/core/routing/route_names.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../core/models/task_model.dart';
+import '../../../core/routing/app_navigator.dart';
+import '../../../core/routing/route_names.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../task/view/create_task_screen.dart';
+import '../../task/view/task_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,34 +21,109 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String selectedFilter = "Today";
 
-  final allTasks = [
-    {"title": "Fix UI Bug", "due": "Yesterday", "status": "Past Due"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Team Meeting", "due": "Today", "status": "Today"},
-    {"title": "Write Report", "due": "Tomorrow", "status": "Upcoming"},
-    {"title": "Code Review", "due": "Today", "status": "Today"},
-    {"title": "Plan Sprint", "due": "Next Week", "status": "Upcoming"},
-    {"title": "Submit Design", "due": "Yesterday", "status": "Past Due"},
-    {"title": "Backup Data", "due": "Today", "status": "Completed"},
+  final List<TaskModel> allTasks = [
+    TaskModel(
+      id: '1',
+      title: 'Fix UI Bug',
+      description: 'Resolve layout overflow on dashboard cards.',
+      dueDate: DateTime.now().subtract(const Duration(days: 1)),
+      priority: TaskPriority.high,
+      status: 'Past Due',
+    ),
+    TaskModel(
+      id: '2',
+      title: 'Team Meeting',
+      description: 'Discuss project milestones and blockers.',
+      dueDate: DateTime.now(),
+      priority: TaskPriority.medium,
+      status: 'Today',
+    ),
+    TaskModel(
+      id: '3',
+      title: 'Write Report',
+      description: 'Summarize sprint achievements and blockers.',
+      dueDate: DateTime.now().add(const Duration(days: 1)),
+      priority: TaskPriority.low,
+      status: 'Upcoming',
+    ),
+    TaskModel(
+      id: '4',
+      title: 'Code Review',
+      description: 'Review PR #234 for new authentication module.',
+      dueDate: DateTime.now(),
+      priority: TaskPriority.medium,
+      status: 'Today',
+    ),
+    TaskModel(
+      id: '5',
+      title: 'Plan Sprint',
+      description: 'Plan next sprint goals with product team.',
+      dueDate: DateTime.now().add(const Duration(days: 7)),
+      priority: TaskPriority.high,
+      status: 'Upcoming',
+    ),
+    TaskModel(
+      id: '6',
+      title: 'Submit Design',
+      description: 'Finalize and submit Figma designs to client.',
+      dueDate: DateTime.now().subtract(const Duration(days: 1)),
+      priority: TaskPriority.high,
+      status: 'Past Due',
+    ),
+    TaskModel(
+      id: '7',
+      title: 'Backup Data',
+      description: 'Run full system backup before release.',
+      dueDate: DateTime.now(),
+      priority: TaskPriority.low,
+      status: 'Completed',
+    ),
   ];
 
-  List<Map<String, dynamic>> get filteredTasks {
+  List<TaskModel> get filteredTasks {
     if (selectedFilter == "All") return allTasks;
-    return allTasks.where((task) => task["status"] == selectedFilter).toList();
+    return allTasks.where((task) => task.status == selectedFilter).toList();
   }
-
   void onFilterSelected(String filter) {
     setState(() {
       selectedFilter = filter;
     });
   }
+
+  Widget _taskCard(TaskModel task) {
+    return Hero(
+      tag: 'task-card-${task.id}',
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          leading: CircleAvatar(child: const Icon(Icons.task_alt)),
+          title: Material(
+            color: Colors.transparent,
+            child: Text(
+              task.title,
+              style: AppTypography.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          subtitle: Text(
+            'Due: ${task.dueDate.day}/${task.dueDate.month}/${task.dueDate.year}',
+          ),
+          trailing: Icon(
+            task.status == 'Completed' ? Icons.check_circle : Icons.schedule,
+            color: task.status == 'Completed' ? Colors.green : Colors.orange,
+          ),
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildFilterChip(String label, IconData icon, Color color) {
     final bool isSelected = selectedFilter == label;
@@ -87,14 +166,31 @@ class _HomeScreenState extends State<HomeScreen> {
         FocusScope.of(context).unfocus(); // hides keyboard + removes focus
       },
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => AppNavigator.pushToNamed(RouteNames.createTask),
-          backgroundColor: Theme.of(
-            context,
-          ).floatingActionButtonTheme.backgroundColor,
-          shape: CircleBorder(),
-          child: Icon(Icons.create),
-        ).fadeInUp(),
+        floatingActionButton: OpenContainer(
+          transitionType: ContainerTransitionType.fade,
+          openColor:
+              Theme.of(context).floatingActionButtonTheme.backgroundColor ??
+              Theme.of(context).colorScheme.primary,
+          closedColor:
+              Theme.of(context).floatingActionButtonTheme.backgroundColor ??
+              Theme.of(context).colorScheme.primary,
+          closedShape: const CircleBorder(),
+          closedElevation: 6,
+          transitionDuration: const Duration(milliseconds: 750),
+          closedBuilder: (context, openContainer) {
+            return FloatingActionButton(
+              onPressed: openContainer,
+              backgroundColor: Theme.of(
+                context,
+              ).floatingActionButtonTheme.backgroundColor,
+              child: const Icon(Icons.create),
+            );
+          },
+
+          openBuilder: (context, closeContainer) {
+            return const CreateTaskScreen();
+          },
+        ).fadeInUpBig(),
         body: NotificationListener<ScrollNotification>(
           onNotification: (_) => true,
           child: CustomScrollView(
@@ -126,7 +222,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Row(
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              AppNavigator.pushToNamed(RouteNames.profile);
+                            },
                             icon: const Icon(Icons.account_circle),
                             iconSize: AppSpacing.xxl,
                           ),
@@ -168,7 +266,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  AppNavigator.pushToNamed(RouteNames.profile);
+                                },
                                 icon: const Icon(Icons.account_circle),
                                 iconSize: AppSpacing.xxl,
                               ),
@@ -257,6 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _CategorySliverPersistentHeaderDelegate(
+                  key: ValueKey(selectedFilter), // 🔥 add this key
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     padding: const EdgeInsets.symmetric(
@@ -294,67 +395,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
+
               // --- Animated Task List ---
               SliverToBoxAdapter(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
-                  transitionBuilder: (child, animation) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                  child: Column(
-                    key: ValueKey(selectedFilter),
-                    children: filteredTasks.map((task) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
+                child: Column(
+                  children: filteredTasks.map((task) {
+                    // Wrap each card in OpenContainer for morphing animation.
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: OpenContainer(
+                        transitionDuration: const Duration(milliseconds: 500),
+                        closedElevation: 0,
+                        openElevation: 8,
+                        closedColor: Colors.transparent,
+                        openColor: Theme.of(context).scaffoldBackgroundColor,
+                        closedShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.blueAccent.withOpacity(
-                                0.15,
-                              ),
-                              child: const Icon(
-                                Icons.task_alt,
-                                color: Colors.blueAccent,
-                              ),
-                            ),
-                            title: Text(
-                              task["title"],
-                              style: AppTypography.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            subtitle: Text(
-                              "Due: ${task["due"]}",
-                              style: AppTypography.inter(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            trailing: Icon(
-                              task["status"] == "Completed"
-                                  ? Icons.check_circle
-                                  : Icons.schedule,
-                              color: task["status"] == "Completed"
-                                  ? Colors.green
-                                  : Colors.orangeAccent,
-                            ),
-                          ),
-                        ).fadeInUp(),
-                      );
-                    }).toList(),
-                  ),
+                        openBuilder: (context, _) {
+                          return TaskDetailScreen(task: task);
+                        },
+                        closedBuilder: (context, open) {
+                          return GestureDetector(
+                            onTap: open,
+                            child: _taskCard(task),
+                          );
+                        },
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ],
@@ -369,9 +441,11 @@ class _HomeScreenState extends State<HomeScreen> {
 class _CategorySliverPersistentHeaderDelegate
     extends SliverPersistentHeaderDelegate {
   final Widget child;
-  _CategorySliverPersistentHeaderDelegate({required this.child});
+  final Key? key;
 
-  static const double _height = 64.0; // fixed safe height to avoid extent error
+  _CategorySliverPersistentHeaderDelegate({required this.child, this.key});
+
+  static const double _height = 64.0;
 
   @override
   Widget build(
@@ -386,7 +460,9 @@ class _CategorySliverPersistentHeaderDelegate
   double get maxExtent => _height;
   @override
   double get minExtent => _height;
+
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+  bool shouldRebuild(_CategorySliverPersistentHeaderDelegate oldDelegate) {
+    return oldDelegate.key != key; // ✅ rebuild only when selectedFilter changes
+  }
 }

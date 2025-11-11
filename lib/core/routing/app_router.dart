@@ -1,13 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wowtask/features/task/view/create_task_screen.dart';
 
 import '../../features/auth/view/login_screen.dart';
 import '../../features/auth/view/signup_screen.dart';
 import '../../features/auth/view/welcome_screen.dart';
 import '../../features/home/view/home_screen.dart';
+import '../../features/profile/view/profile_screen.dart';
 import '../../features/splash/view/splash_screen.dart';
+import '../../features/task/view/create_task_screen.dart';
+import '../../features/task/view/edit_task_screen.dart';
+import '../../features/task/view/task_detail_screen.dart';
+import '../models/task_model.dart';
 import '../storage/app_preferences.dart';
 import '../widgets/error_screen.dart';
 import 'app_routes.dart';
@@ -33,6 +37,7 @@ class AppRouter {
       routes: [
         ..._splashRoutes,
         ..._authRoutes,
+        ..._userRoutes,
         ..._homeRoutes,
         ..._taskRoutes,
         ..._errorRoutes,
@@ -72,6 +77,14 @@ class AppRouter {
     ),
   ];
 
+  static final List<GoRoute> _userRoutes = [
+    GoRoute(
+      path: AppRoutes.profile,
+      name: RouteNames.profile,
+      builder: (context, state) => const ProfileScreen(),
+    ),
+  ];
+
   /// App routes after login (Home, Profile, TaskDetail, etc.)
   static final List<GoRoute> _homeRoutes = [
     GoRoute(
@@ -88,6 +101,23 @@ class AppRouter {
       name: RouteNames.createTask,
       builder: (context, state) => const CreateTaskScreen(),
     ),
+    GoRoute(
+      path: AppRoutes.taskDetail,
+      name: RouteNames.taskDetail,
+      builder: (context, state) {
+        final task = state.extra as TaskModel;
+        return TaskDetailScreen(task: task);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.editTask,
+      name: RouteNames.editTask,
+      builder: (context, state) {
+        final task = state.extra as TaskModel;
+        return EditTaskScreen(task: task);
+      },
+    ),
+
   ];
 
   /// Error and fallback routes

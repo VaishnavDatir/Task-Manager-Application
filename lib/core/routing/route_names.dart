@@ -9,6 +9,7 @@ class RouteNames {
 
   static const createTask = 'createTask';
   static const taskDetail = 'taskDetail';
+  static const editTask = 'editTask';
   
   static const error = 'error';
 }

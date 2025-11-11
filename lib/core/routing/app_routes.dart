@@ -11,6 +11,7 @@ class AppRoutes {
   
   static const createTask = '/task/create';
   static const taskDetail = '/task/:id';
+  static const editTask = '/task/edit/:id';
   
   static const error = '/error';
 }

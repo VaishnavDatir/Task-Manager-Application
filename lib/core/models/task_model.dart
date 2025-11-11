@@ -4,15 +4,14 @@ import 'package:flutter/foundation.dart';
 enum TaskPriority { low, medium, high }
 
 class TaskModel {
-  final String id;
-  final String title;
-  final String description;
-  final DateTime dueDate;
-  final TaskPriority priority;
-  final String? category;
-  final String status;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
+  String id;
+  String title;
+  String description;
+  DateTime dueDate;
+  TaskPriority priority;
+  String status;
+  DateTime createdAt;
+  DateTime? updatedAt;
 
   TaskModel({
     required this.id,
@@ -20,7 +19,6 @@ class TaskModel {
     required this.description,
     required this.dueDate,
     required this.priority,
-    this.category,
     this.status = 'Pending',
     DateTime? createdAt,
     this.updatedAt,
@@ -43,7 +41,6 @@ class TaskModel {
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
       priority: priority ?? this.priority,
-      category: category ?? this.category,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -56,7 +53,6 @@ class TaskModel {
     'description': description,
     'dueDate': dueDate.toIso8601String(),
     'priority': describeEnum(priority),
-    'category': category,
     'status': status,
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt?.toIso8601String(),
@@ -82,7 +78,6 @@ class TaskModel {
       description: json['description'] ?? '',
       dueDate: DateTime.parse(json['dueDate']),
       priority: parsePriority(json['priority'] as String?),
-      category: json['category'] as String?,
       status: json['status'] ?? 'Pending',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])

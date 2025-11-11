@@ -18,7 +18,7 @@ class CreateTaskScreen extends StatelessWidget {
 }
 
 class _CreateTaskView extends StatelessWidget {
-  const _CreateTaskView({super.key});
+  const _CreateTaskView();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _CreateTaskView extends StatelessWidget {
                       autofillHints: const [AutofillHints.name],
                       maxLength: 100,
                       decoration: InputDecoration(
-                        hintText: 'Task Title *',
+                        hintText: 'Task Title',
                         filled: true,
                         fillColor: theme.colorScheme.surface,
                         contentPadding: const EdgeInsets.symmetric(
@@ -81,7 +81,7 @@ class _CreateTaskView extends StatelessWidget {
                       maxLines: 4,
                       maxLength: 500,
                       decoration: InputDecoration(
-                        hintText: 'Description (optional)',
+                        hintText: 'Description ',
                         filled: true,
                         fillColor: theme.colorScheme.surface,
                         contentPadding: const EdgeInsets.symmetric(
@@ -97,7 +97,7 @@ class _CreateTaskView extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // Priority selector
-                    Text('Priority *', style: theme.textTheme.titleMedium),
+                    Text('Priority', style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
@@ -117,7 +117,7 @@ class _CreateTaskView extends StatelessWidget {
 
                     // Due date/time selector
                     Text(
-                      'Due (Date & Time) *',
+                      'Due Time',
                       style: theme.textTheme.titleMedium,
                     ),
                     const SizedBox(height: 8),
