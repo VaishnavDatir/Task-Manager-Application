@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../core/models/user_model.dart';
 import '../../../core/repositories/auth_repository.dart';
@@ -43,14 +42,6 @@ class AuthViewModel extends ChangeNotifier {
       _errorMessage = null;
       _setStatus(AuthStatus.success);
 
-      // 💾 Save session for persistence
-      await _prefs.saveUserSession(
-        id: user.id,
-        name: user.fullName,
-        token: const Uuid()
-            .v8(), // Replace with Back4App session token if available
-      );
-
       await _prefs.saveUserModel(user);
       _logger.i('✅ Logged in as ${user.fullName}');
       AppNavigator.goToHome();
@@ -82,7 +73,7 @@ class AuthViewModel extends ChangeNotifier {
         password: password,
         fullName: fullName,
         phone: phone,
-        email: email 
+        email: email ?? username
       );
 
       _user = user;
@@ -90,16 +81,16 @@ class AuthViewModel extends ChangeNotifier {
       _setStatus(AuthStatus.success);
 
       await _prefs.saveUserModel(user!);
-      _logger.i('✅ Signup successful: ${user.email}');
+      _logger.i('Signup successful: ${user.email}');
       AppNavigator.goToLogin();
     } on AuthException catch (e) {
       _errorMessage = e.message;
       _setStatus(AuthStatus.error);
-      _logger.w('⚠️ Signup AuthException: ${e.message}');
+      _logger.w('Signup AuthException: ${e.message}');
     } catch (e, st) {
       _errorMessage = 'Something went wrong during signup.';
       _setStatus(AuthStatus.error);
-      _logger.e('❌ Unexpected signup error', error: e, stackTrace: st);
+      _logger.e('Unexpected signup error', error: e, stackTrace: st);
     }
   }
 

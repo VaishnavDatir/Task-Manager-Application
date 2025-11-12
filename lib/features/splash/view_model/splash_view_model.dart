@@ -12,9 +12,9 @@ class SplashViewModel extends ChangeNotifier {
 
   /// Called once after the first frame from SplashScreen
   Future<void> initialize(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 4)); // splash delay
+    await Future.delayed(const Duration(seconds: 3)); // splash delay
     final isLoggedIn = _prefs.isLoggedIn;
-    AppLogger().i("isLoggedIn = $isLoggedIn");
+    log.i("isLoggedIn = $isLoggedIn");
 
     if (context.mounted) {
       if (isLoggedIn) {

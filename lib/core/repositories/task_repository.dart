@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
 
-import '../../core/network/api_client.dart';
-
 class TaskRepository {
-  final Dio _dio = ApiClient().dio;
+  final Dio _dio;
+  TaskRepository(this._dio);
 
   Future<List<dynamic>> fetchTasks() async {
     final response = await _dio.get('/Task');

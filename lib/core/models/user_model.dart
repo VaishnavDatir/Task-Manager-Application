@@ -11,6 +11,7 @@ class UserModel {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final bool isActive;
+  final String? sessionToken;
 
   const UserModel({
     required this.id,
@@ -22,12 +23,13 @@ class UserModel {
     required this.createdAt,
     this.updatedAt,
     this.isActive = true,
+    this.sessionToken
   });
 
   ///  Converts JSON to UserModel
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? '',
+      id: json['id'] ?? (json['objectId'] ?? ''),
       fullName: json['fullName'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
@@ -38,6 +40,7 @@ class UserModel {
           ? DateTime.tryParse(json['updatedAt'])
           : null,
       isActive: json['isActive'] ?? true,
+      sessionToken: json['sessionToken']
     );
   }
 
@@ -53,6 +56,7 @@ class UserModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'isActive': isActive,
+      'sessionToken': sessionToken
     };
   }
 
@@ -67,6 +71,7 @@ class UserModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isActive,
+    String? sessionToken,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -78,11 +83,12 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isActive: isActive ?? this.isActive,
+      sessionToken: sessionToken ?? this.sessionToken
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(id: $id, fullName: $fullName, email: $email, phone: $phone, role: $role, createdAt: $createdAt, isActive: $isActive)';
+    return 'UserModel(id: $id, fullName: $fullName, email: $email, phone: $phone, role: $role, createdAt: $createdAt, isActive: $isActive, sessionToken: $sessionToken)';
   }
 }

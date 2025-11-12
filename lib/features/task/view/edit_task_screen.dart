@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/storage/app_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 import '../view_model/edit_task_viewmodel.dart';
 
@@ -12,7 +14,11 @@ class EditTaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EditTaskViewModel(task),
+      create: (context) => EditTaskViewModel(
+        task,
+        context.read<ApiClient>(), // example dependency
+        context.read<AppPreferences>(), // example dependency
+      ),
       child: const _EditTaskView(),
     );
   }

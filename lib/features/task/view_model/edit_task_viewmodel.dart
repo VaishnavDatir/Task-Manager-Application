@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/storage/app_preferences.dart';
 
 class EditTaskViewModel extends ChangeNotifier {
-  final TaskModel task;
 
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
@@ -14,12 +15,18 @@ class EditTaskViewModel extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  EditTaskViewModel(this.task)
+  final TaskModel task;
+  final ApiClient apiClient;
+  final AppPreferences prefs;
+
+  EditTaskViewModel(this.task, this.apiClient, this.prefs)
     : selectedPriority = task.priority,
       selectedDueDate = task.dueDate {
     titleController.text = task.title;
     descriptionController.text = task.description;
   }
+
+   
 
   String get dueDateText => selectedDueDate == null
       ? 'Select due date'

@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/app_keys.dart';
 import '../models/user_model.dart';
+import '../utils/logger.dart';
 
 ///  AppPreferences
 /// A robust, type-safe wrapper around [SharedPreferences] with logging.
@@ -12,7 +12,6 @@ import '../models/user_model.dart';
 class AppPreferences {
   static AppPreferences? _instance;
   static SharedPreferences? _prefs;
-  final Logger _logger = Logger();
 
   AppPreferences._internal();
 
@@ -43,65 +42,65 @@ class AppPreferences {
   Future<void> setString(String key, String value) async {
     _ensureInitialized();
     await _prefs!.setString(key, value);
-    _logger.d("Saved string → [$key] = $value");
+    log.d("Saved string → [$key] = $value");
   }
 
   String? getString(String key) {
     _ensureInitialized();
     final value = _prefs!.getString(key);
-    _logger.d("Fetched string ← [$key] = $value");
+    log.d("Fetched string ← [$key] = $value");
     return value;
   }
 
   Future<void> setBool(String key, bool value) async {
     _ensureInitialized();
     await _prefs!.setBool(key, value);
-    _logger.d("Saved bool → [$key] = $value");
+    log.d("Saved bool → [$key] = $value");
   }
 
   bool getBool(String key, {bool defaultValue = false}) {
     _ensureInitialized();
     final value = _prefs!.getBool(key) ?? defaultValue;
-    _logger.d("Fetched bool ← [$key] = $value");
+    log.d("Fetched bool ← [$key] = $value");
     return value;
   }
 
   Future<void> setInt(String key, int value) async {
     _ensureInitialized();
     await _prefs!.setInt(key, value);
-    _logger.d("Saved int → [$key] = $value");
+    log.d("Saved int → [$key] = $value");
   }
 
   int? getInt(String key) {
     _ensureInitialized();
     final value = _prefs!.getInt(key);
-    _logger.d("Fetched int ← [$key] = $value");
+    log.d("Fetched int ← [$key] = $value");
     return value;
   }
 
   Future<void> setDouble(String key, double value) async {
     _ensureInitialized();
     await _prefs!.setDouble(key, value);
-    _logger.d("Saved double → [$key] = $value");
+    log.d("Saved double → [$key] = $value");
   }
 
   double? getDouble(String key) {
     _ensureInitialized();
     final value = _prefs!.getDouble(key);
-    _logger.d("Fetched double ← [$key] = $value");
+    log.d("Fetched double ← [$key] = $value");
     return value;
   }
 
   Future<void> setStringList(String key, List<String> value) async {
     _ensureInitialized();
     await _prefs!.setStringList(key, value);
-    _logger.d("Saved list → [$key] = $value");
+    log.d("Saved list → [$key] = $value");
   }
 
   List<String>? getStringList(String key) {
     _ensureInitialized();
     final value = _prefs!.getStringList(key);
-    _logger.d("Fetched list ← [$key] = $value");
+    log.d("Fetched list ← [$key] = $value");
     return value;
   }
 
@@ -111,43 +110,25 @@ class AppPreferences {
 
   Future<void> saveAuthToken(String token) async {
     await setString(AppKeys.token, token);
-    _logger.i("✅ Auth token saved");
+    log.i("Auth token saved");
   }
 
   String? get authToken => getString(AppKeys.token);
 
-  Future<void> saveUserSession({
-    required String id,
-    required String name,
-    required String token,
-  }) async {
-    _ensureInitialized();
-    await Future.wait([
-      setString(AppKeys.userId, id),
-      setString(AppKeys.userName, name),
-      setString(AppKeys.token, token),
-      setBool(AppKeys.isLoggedIn, true),
-    ]);
-    _logger.i("✅ User session saved → id: $id, name: $name");
-  }
-
   bool get isLoggedIn {
     _ensureInitialized();
-    final status = getBool(AppKeys.isLoggedIn);
-    _logger.d("Checked login status → $status");
+    final bool status = getUserModel() != null;
+    log.d("Checked login status → $status");
     return status;
   }
 
   Future<void> clearUserSession() async {
     _ensureInitialized();
     await Future.wait([
-      _prefs!.remove(AppKeys.userId),
-      _prefs!.remove(AppKeys.userName),
-      _prefs!.remove(AppKeys.token),
       setBool(AppKeys.isLoggedIn, false),
       _prefs!.remove(AppKeys.userData),
     ]);
-    _logger.w("🧹 User session cleared");
+    log.w("🧹 User session cleared");
   }
 
   // ==========================
@@ -158,22 +139,22 @@ class AppPreferences {
     _ensureInitialized();
     final jsonData = jsonEncode(user.toJson());
     await _prefs!.setString(AppKeys.userData, jsonData);
-    _logger.i("👤 UserModel saved → ${user.fullName}");
+    log.i("👤 UserModel saved → ${user.fullName}");
   }
 
   UserModel? getUserModel() {
     _ensureInitialized();
     final jsonStr = _prefs!.getString(AppKeys.userData);
     if (jsonStr == null) {
-      _logger.w("⚠️ No saved user model found");
+      log.w("No saved user model found");
       return null;
     }
     try {
       final user = UserModel.fromJson(jsonDecode(jsonStr));
-      _logger.d("👤 UserModel loaded → ${user.fullName}");
+      log.d("UserModel loaded → ${user.fullName}");
       return user;
     } catch (e) {
-      _logger.e("❌ Failed to decode user model: $e");
+      log.e("Failed to decode user model: $e");
       return null;
     }
   }
@@ -185,6 +166,6 @@ class AppPreferences {
   Future<void> clearAll() async {
     _ensureInitialized();
     await _prefs!.clear();
-    _logger.w("🧨 All preferences cleared");
+    log.w("🧨 All preferences cleared");
   }
 }

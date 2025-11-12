@@ -18,31 +18,36 @@ class AppLogger {
   
 
   /// Log informational messages
-  void i(String message, {String? tag}) {
+  void i(dynamic message, {String? tag}) {
     _logger.i(_format(message, tag));
   }
 
   /// Log warning messages
-  void w(String message, {String? tag}) {
+  void w(dynamic message, {String? tag}) {
     _logger.w(_format(message, tag));
   }
 
   /// Log error messages (with optional exception or stacktrace)
-  void e(String message, {String? tag, dynamic error, StackTrace? stackTrace}) {
+  void e(
+    dynamic message, {
+    String? tag,
+    dynamic error,
+    StackTrace? stackTrace,
+  }) {
     _logger.e(_format(message, tag), error: error, stackTrace: stackTrace);
   }
 
   /// Log verbose/debug messages
-  void d(String message, {String? tag}) {
+  void d(dynamic message, {String? tag}) {
     _logger.d(_format(message, tag));
   }
 
   /// Log critical/fatal messages
-  void f(String message, {String? tag}) {
+  void f(dynamic message, {String? tag}) {
     _logger.f(_format(message, tag));
   }
 
-  String _format(String message, String? tag) {
+  dynamic _format(dynamic message, String? tag) {
     return tag != null ? "[$tag] $message" : message;
   }
 }
