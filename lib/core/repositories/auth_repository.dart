@@ -1,69 +1,118 @@
 import 'dart:async';
 
-import '../models/user_model.dart';
+import 'package:dio/dio.dart';
 
-/// AuthRepository
-/// Handles all authentication-related API calls or logic.
-/// Currently simulates mock API behavior — can be replaced later with real API integration.
+import '../models/user_model.dart';
+import '../network/api_client.dart';
+import '../network/api_endpoints.dart';
+import '../utils/logger.dart';
+
 class AuthRepository {
+  final Dio _dio = ApiClient().dio;
   UserModel? _currentUser;
+  String? _sessionToken;
 
   UserModel? get currentUser => _currentUser;
+  String? get sessionToken => _sessionToken;
 
-  /// Simulated login method
-  Future<UserModel?> login(String email, String password) async {
-    await Future.delayed(const Duration(seconds: 2)); // simulate network delay
-
-    if (email == 'test@demo.com' && password == '1234') {
-      _currentUser = UserModel(
-        id: '1',
-        fullName: 'Vaishnav Datir',
-        email: email,
-        phone: '+91 9876543210',
-        profileImage: 'https://i.pravatar.cc/150?img=3',
-        role: 'student',
-        createdAt: DateTime(2024, 5, 10),
-        updatedAt: DateTime.now(),
-        isActive: true,
+  /// 🔐 Login user
+  Future<UserModel?> login(String username, String password) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.login,
+        data: {'username': username, 'password': password},
       );
+
+      AppLogger().i('✅ Login successful');
+      AppLogger().d(response.data);
+
+      final data = response.data;
+
+      _currentUser = UserModel.fromJson(data);
+      _sessionToken = data['sessionToken'] ?? data['token'];
+
       return _currentUser;
-    } else {
-      throw AuthException(
-        'Invalid credentials. Please check your email or password.',
-      );
+    } on DioException catch (e) {
+      final message = e.response?.data['error'] ?? 'Login failed';
+      AppLogger().e('❌ Login failed: $message');
+      throw AuthException(message);
     }
   }
 
-  /// Simulated signup method
-  Future<UserModel> signup({
-    required String fullName,
-    required String email,
-    required String phone,
+  /// 📝 Signup user
+  Future<UserModel?> signup({
+    required String username,
     required String password,
+    required String fullName,
+    String? phone,
+    String? email,
   }) async {
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.signup,
+        data: {
+          'username': username,
+          'password': password,
+          'email': email,
+          'userFullName': fullName,
+          'userMobileNo': phone,
+        },
+      );
 
-    return UserModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      fullName: fullName,
-      email: email,
-      phone: phone,
-      profileImage: null,
-      role: 'student',
-      createdAt: DateTime.now(),
-      updatedAt: null,
-      isActive: true,
-    );
+      AppLogger().i('✅ Signup successful');
+      AppLogger().d(response.data);
+
+      final data = response.data;
+
+      _currentUser = UserModel.fromJson(data);
+      _sessionToken = data['sessionToken'] ?? data['token'];
+
+      return _currentUser;
+    } on DioException catch (e) {
+      final message = e.response?.data['error'] ?? 'Signup failed';
+      AppLogger().e('❌ Signup failed: $message');
+      throw AuthException(message);
+    }
   }
 
-  /// Simulated logout
+  /// 👤 Fetch current user (using session)
+  Future<UserModel?> getCurrentUser(String sessionToken) async {
+    try {
+      final response = await _dio.get(
+        ApiEndpoints.me,
+        options: Options(headers: {'X-Parse-Session-Token': sessionToken}),
+      );
+
+      AppLogger().i('✅ Current user fetched');
+      _currentUser = UserModel.fromJson(response.data);
+      return _currentUser;
+    } on DioException catch (e) {
+      final message = e.response?.data['error'] ?? 'Fetch user failed';
+      AppLogger().e('❌ Fetch current user failed: $message');
+      throw AuthException(message);
+    }
+  }
+
+  /// 🚪 Logout
   Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    // Would clear session/token if using SharedPreferences or secure storage
+    try {
+      if (_sessionToken != null) {
+        await _dio.post(
+          ApiEndpoints.logout,
+          options: Options(headers: {'X-Parse-Session-Token': _sessionToken}),
+        );
+      }
+
+      AppLogger().i('🚪 Logout successful');
+    } catch (e) {
+      AppLogger().w('⚠️ Logout API call failed (ignoring): $e');
+    } finally {
+      _currentUser = null;
+      _sessionToken = null;
+    }
   }
 }
 
-/// Custom exception for authentication-related errors
 class AuthException implements Exception {
   final String message;
   AuthException(this.message);

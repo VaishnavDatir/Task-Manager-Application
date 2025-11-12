@@ -32,7 +32,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final authVM = context.read<AuthViewModel>();
     await authVM.signup(
       fullName: _nameCtrl.text.trim(),
-      email: _emailCtrl.text.trim(),
+      username: _emailCtrl.text.trim(),
       phone: _phoneCtrl.text.trim(),
       password: _passwordCtrl.text.trim(),
     );

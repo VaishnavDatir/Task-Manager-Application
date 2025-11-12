@@ -7,4 +7,6 @@ class AppKeys {
   static const String isLoggedIn = 'is_logged_in';
   static const String themeMode = 'theme_mode';
   static const String lastSyncTime = 'last_sync_time';
+  static const String userData = 'user_data';
+
 }

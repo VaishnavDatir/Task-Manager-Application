@@ -1,21 +1,18 @@
+import 'dart:convert';
+
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/app_keys.dart';
+import '../models/user_model.dart';
 
-/// 🌟 AppPreferences
-/// A robust, type-safe wrapper around [SharedPreferences].
-///
-/// Built for MVVM or Clean Architecture with scalability in mind.
-///
-/// Example usage:
-/// ```dart
-/// await AppPreferences.instance.saveAuthToken('abcd1234');
-/// final token = AppPreferences.instance.authToken;
-/// await AppPreferences.instance.clearUserSession();
-/// ```
+///  AppPreferences
+/// A robust, type-safe wrapper around [SharedPreferences] with logging.
+/// Supports saving/restoring user session and model.
 class AppPreferences {
   static AppPreferences? _instance;
   static SharedPreferences? _prefs;
+  final Logger _logger = Logger();
 
   AppPreferences._internal();
 
@@ -46,59 +43,76 @@ class AppPreferences {
   Future<void> setString(String key, String value) async {
     _ensureInitialized();
     await _prefs!.setString(key, value);
+    _logger.d("Saved string → [$key] = $value");
   }
 
   String? getString(String key) {
     _ensureInitialized();
-    return _prefs!.getString(key);
+    final value = _prefs!.getString(key);
+    _logger.d("Fetched string ← [$key] = $value");
+    return value;
   }
 
   Future<void> setBool(String key, bool value) async {
     _ensureInitialized();
     await _prefs!.setBool(key, value);
+    _logger.d("Saved bool → [$key] = $value");
   }
 
   bool getBool(String key, {bool defaultValue = false}) {
     _ensureInitialized();
-    return _prefs!.getBool(key) ?? defaultValue;
+    final value = _prefs!.getBool(key) ?? defaultValue;
+    _logger.d("Fetched bool ← [$key] = $value");
+    return value;
   }
 
   Future<void> setInt(String key, int value) async {
     _ensureInitialized();
     await _prefs!.setInt(key, value);
+    _logger.d("Saved int → [$key] = $value");
   }
 
   int? getInt(String key) {
     _ensureInitialized();
-    return _prefs!.getInt(key);
+    final value = _prefs!.getInt(key);
+    _logger.d("Fetched int ← [$key] = $value");
+    return value;
   }
 
   Future<void> setDouble(String key, double value) async {
     _ensureInitialized();
     await _prefs!.setDouble(key, value);
+    _logger.d("Saved double → [$key] = $value");
   }
 
   double? getDouble(String key) {
     _ensureInitialized();
-    return _prefs!.getDouble(key);
+    final value = _prefs!.getDouble(key);
+    _logger.d("Fetched double ← [$key] = $value");
+    return value;
   }
 
   Future<void> setStringList(String key, List<String> value) async {
     _ensureInitialized();
     await _prefs!.setStringList(key, value);
+    _logger.d("Saved list → [$key] = $value");
   }
 
   List<String>? getStringList(String key) {
     _ensureInitialized();
-    return _prefs!.getStringList(key);
+    final value = _prefs!.getStringList(key);
+    _logger.d("Fetched list ← [$key] = $value");
+    return value;
   }
 
   // ==========================
-  // Common Application Methods
+  // Session Management
   // ==========================
 
-  Future<void> saveAuthToken(String token) async =>
-      setString(AppKeys.token, token);
+  Future<void> saveAuthToken(String token) async {
+    await setString(AppKeys.token, token);
+    _logger.i("✅ Auth token saved");
+  }
 
   String? get authToken => getString(AppKeys.token);
 
@@ -114,6 +128,14 @@ class AppPreferences {
       setString(AppKeys.token, token),
       setBool(AppKeys.isLoggedIn, true),
     ]);
+    _logger.i("✅ User session saved → id: $id, name: $name");
+  }
+
+  bool get isLoggedIn {
+    _ensureInitialized();
+    final status = getBool(AppKeys.isLoggedIn);
+    _logger.d("Checked login status → $status");
+    return status;
   }
 
   Future<void> clearUserSession() async {
@@ -123,16 +145,46 @@ class AppPreferences {
       _prefs!.remove(AppKeys.userName),
       _prefs!.remove(AppKeys.token),
       setBool(AppKeys.isLoggedIn, false),
+      _prefs!.remove(AppKeys.userData),
     ]);
+    _logger.w("🧹 User session cleared");
   }
 
-  bool get isLoggedIn {
+  // ==========================
+  // User Model Persistence
+  // ==========================
+
+  Future<void> saveUserModel(UserModel user) async {
     _ensureInitialized();
-    return getBool(AppKeys.isLoggedIn);
+    final jsonData = jsonEncode(user.toJson());
+    await _prefs!.setString(AppKeys.userData, jsonData);
+    _logger.i("👤 UserModel saved → ${user.fullName}");
   }
+
+  UserModel? getUserModel() {
+    _ensureInitialized();
+    final jsonStr = _prefs!.getString(AppKeys.userData);
+    if (jsonStr == null) {
+      _logger.w("⚠️ No saved user model found");
+      return null;
+    }
+    try {
+      final user = UserModel.fromJson(jsonDecode(jsonStr));
+      _logger.d("👤 UserModel loaded → ${user.fullName}");
+      return user;
+    } catch (e) {
+      _logger.e("❌ Failed to decode user model: $e");
+      return null;
+    }
+  }
+
+  // ==========================
+  // Misc
+  // ==========================
 
   Future<void> clearAll() async {
     _ensureInitialized();
     await _prefs!.clear();
+    _logger.w("🧨 All preferences cleared");
   }
 }

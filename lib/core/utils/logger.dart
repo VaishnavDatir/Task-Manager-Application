@@ -15,6 +15,7 @@ class AppLogger {
       filter: _ReleaseFilter(), // Custom filter to disable logs in release mode
     );
   }
+  
 
   /// Log informational messages
   void i(String message, {String? tag}) {

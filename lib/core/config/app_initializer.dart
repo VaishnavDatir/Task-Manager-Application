@@ -1,18 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../network/api_client.dart';
 import '../storage/app_preferences.dart';
 import '../utils/logger.dart';
 
 class AppInitializer {
   static Future<void> init() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
     await AppPreferences.init();
 
-    // await Parse().initialize(
-    //   ParseConfig.appId,
-    //   ParseConfig.serverUrl,
-    //   clientKey: ParseConfig.clientKey,
-    //   autoSendSessionId: true,
-    //   debug: true,
-    // );
-
+    await dotenv.load(fileName: ".env");
+    ApiClient().initialize();
+    
     AppLogger().i("Application initialization done");
   }
 }

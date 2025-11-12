@@ -12,7 +12,6 @@ import 'core/theme/app_theme.dart';
 import 'core/widgets/error_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await AppInitializer.init();
 
   runApp(
