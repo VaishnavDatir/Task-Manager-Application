@@ -112,7 +112,7 @@ class CreateTaskViewModel extends ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 800));
 
       final task = TaskModel(
-        id: UuidV6().toString(),
+        objectId: UuidV6().toString(),
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         priority: selectedPriority,

@@ -42,9 +42,7 @@ class TaskDetailViewModel extends ChangeNotifier {
       // TODO: actually delete via repository
       await Future.delayed(const Duration(milliseconds: 400));
       // return to previous screen with deleted result
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop({'action': 'deleted', 'id': _task.id});
-      }
+      AppNavigator.goBack();
     } catch (e) {
       _error = 'Failed to delete';
       notifyListeners();
@@ -56,16 +54,12 @@ class TaskDetailViewModel extends ChangeNotifier {
   Future<void> editTask(BuildContext context) async {
     final updatedTask = await AppNavigator.pushToNamed(
       RouteNames.editTask,
-      params: {"id": task.id},
+      params: {"id": task.objectId},
       extra: task,
     );
 
     if (updatedTask != null) {
-      task.title = updatedTask.title;
-      task.description = updatedTask.description;
-      task.priority = updatedTask.priority;
-      task.dueDate = updatedTask.dueDate;
-      task.status = updatedTask.status;
+      
       notifyListeners();
     }
   }

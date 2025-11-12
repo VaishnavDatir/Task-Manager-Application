@@ -14,7 +14,7 @@ class WowTaskLogo extends StatelessWidget {
     final theme = Theme.of(context);
     final textTheme = AppTypography.textTheme(theme.brightness);
 
-    final baseStyle = textTheme.displayLarge!.copyWith(
+    textTheme.displayLarge!.copyWith(
       fontSize: fontSize ?? textTheme.displayLarge!.fontSize,
       shadows: showShadow
           ? [

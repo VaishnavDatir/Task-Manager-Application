@@ -2,6 +2,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 import '../../features/auth/view_model/auth_viewmodel.dart';
+import '../../features/home/view_model/home_viewmodel.dart';
 import '../../features/profile/view_model/profile_viewmodel.dart';
 import '../../features/splash/view_model/splash_view_model.dart';
 import '../../features/task/view_model/create_task_viewmodel.dart';
@@ -23,7 +24,10 @@ class AppProviders {
       create: (context) => AuthRepository(context.read<ApiClient>().dio),
     ),
     Provider<TaskRepository>(
-      create: (context) => TaskRepository(context.read<ApiClient>().dio),
+      create: (context) => TaskRepository(
+        context.read<ApiClient>().dio,
+        context.read<AuthRepository>(),
+      ),
     ),
 
     // ViewModels
@@ -35,6 +39,12 @@ class AppProviders {
       create: (context) => AuthViewModel(
         context.read<AuthRepository>(),
         context.read<AppPreferences>(),
+      ),
+    ),
+    ChangeNotifierProvider<HomeViewModel>(
+      create: (context) => HomeViewModel(
+        context.read<TaskRepository>(),
+        context.read<AuthRepository>(),
       ),
     ),
     ChangeNotifierProvider<CreateTaskViewModel>(

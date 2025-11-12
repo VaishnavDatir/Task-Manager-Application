@@ -36,7 +36,7 @@ class _TaskDetailView extends StatelessWidget {
         elevation: 0,
         iconTheme: theme.iconTheme,
         title: Hero(
-          tag: 'task-title-${task.id}',
+          tag: 'task-title-${task.objectId}',
           child: Material(
             color: Colors.transparent,
             child: Text(
@@ -98,7 +98,7 @@ class _TaskDetailView extends StatelessWidget {
             FadeInUp(
               from: 50,
               child: Hero(
-                tag: 'task-card-${task.id}',
+                tag: 'task-card-${task.objectId}',
                 child: Material(
                   color: theme.colorScheme.surface,
                   elevation: 8,

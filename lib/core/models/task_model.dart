@@ -1,20 +1,20 @@
-// lib/features/tasks/model/task_model.dart
 import 'package:flutter/foundation.dart';
 
 enum TaskPriority { low, medium, high }
 
 class TaskModel {
-  String id;
-  String title;
-  String description;
-  DateTime dueDate;
-  TaskPriority priority;
-  String status;
-  DateTime createdAt;
-  DateTime? updatedAt;
+  final String objectId; // Back4App unique ID
+  final String title;
+  final String description;
+  final DateTime dueDate;
+  final TaskPriority priority;
+  final String status;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final String? createdBy; 
 
   TaskModel({
-    required this.id,
+    required this.objectId,
     required this.title,
     required this.description,
     required this.dueDate,
@@ -22,21 +22,23 @@ class TaskModel {
     this.status = 'Pending',
     DateTime? createdAt,
     this.updatedAt,
+    this.createdBy,
   }) : createdAt = createdAt ?? DateTime.now();
 
+  // 🧩 Copy with
   TaskModel copyWith({
-    String? id,
+    String? objectId,
     String? title,
     String? description,
     DateTime? dueDate,
     TaskPriority? priority,
-    String? category,
     String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? createdBy,
   }) {
     return TaskModel(
-      id: id ?? this.id,
+      objectId: objectId ?? this.objectId,
       title: title ?? this.title,
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
@@ -44,47 +46,65 @@ class TaskModel {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'description': description,
-    'dueDate': dueDate.toIso8601String(),
-    'priority': describeEnum(priority),
-    'status': status,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt?.toIso8601String(),
-  };
+  //  To JSON (for Back4App)
+  Map<String, dynamic> toJson({String? userId}) {
+    final map = {
+      "title": title,
+      "description": description,
+      "dueDate": {"__type": "Date", "iso": dueDate.toUtc().toIso8601String()},
+      "priority": describeEnum(priority),
+      "status": status,
+    };
 
-  factory TaskModel.fromJson(Map<String, dynamic> json) {
+    if (userId != null) {
+      map["createdBy"] = {
+        "__type": "Pointer",
+        "className": "_User",
+        "objectId": userId,
+      };
+    }
+
+    return map;
+  }
+
+
+  // 🧩 From JSON (for Back4App)
+  factory TaskModel.fromJson(Map<dynamic, dynamic> json) {
     TaskPriority parsePriority(String? s) {
-      switch (s) {
+      switch (s?.toLowerCase()) {
         case 'low':
-        case 'TaskPriority.low':
           return TaskPriority.low;
         case 'medium':
-        case 'TaskPriority.medium':
           return TaskPriority.medium;
         default:
           return TaskPriority.high;
       }
     }
 
+    DateTime parseDate(dynamic val) {
+      if (val == null) return DateTime.now();
+      if (val is String) return DateTime.parse(val);
+      if (val is Map && val["iso"] != null) return DateTime.parse(val["iso"]);
+      return DateTime.now();
+    }
+
     return TaskModel(
-      id: json['id']?.toString() ?? UniqueKey().toString(),
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      dueDate: DateTime.parse(json['dueDate']),
-      priority: parsePriority(json['priority'] as String?),
-      status: json['status'] ?? 'Pending',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
+      objectId: json["objectId"] ?? "",
+      title: json["title"] ?? "",
+      description: json["description"] ?? "",
+      dueDate: parseDate(json["dueDate"]),
+      priority: parsePriority(json["priority"]),
+      status: json["status"] ?? "Pending",
+      createdAt: parseDate(json["createdAt"]),
+      updatedAt: json["updatedAt"] != null
+          ? parseDate(json["updatedAt"])
           : null,
+      createdBy: json["createdBy"]?["objectId"] ?? "",
     );
   }
+
 }

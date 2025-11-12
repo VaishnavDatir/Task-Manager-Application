@@ -1,23 +1,97 @@
 import 'package:dio/dio.dart';
 
+import '../../../core/network/api_endpoints.dart';
+import '../models/task_model.dart';
+import '../network/api_custom_header.dart';
+import 'auth_repository.dart';
+
 class TaskRepository {
   final Dio _dio;
-  TaskRepository(this._dio);
+  final AuthRepository _authRepository;
 
-  Future<List<dynamic>> fetchTasks() async {
-    final response = await _dio.get('/Task');
-    return response.data['results'];
+  TaskRepository(this._dio, this._authRepository);
+
+  /// 🔹 Fetch all tasks belonging to current user
+  Future<List<TaskModel>> fetchTasks(String userId) async {
+    try {
+      // Back4App query to get tasks where createdBy.userId = current user
+      final response = await _dio.get(
+        ApiEndpoints.tasks,
+        options: Options(
+          headers: {
+            ApiCustomHeaders.xParseSessionToken:
+                _authRepository.currentUser?.sessionToken,
+          },
+        ),
+        queryParameters: {
+          "where": '{"createdBy":"$userId"}',
+          "order": "-createdAt",
+        },
+      );
+
+      final results = response.data["results"] as List<dynamic>? ?? [];
+      return results.map((e) => TaskModel.fromJson(e)).toList();
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> createTask(Map<String, dynamic> data) async {
-    await _dio.post('/Task', data: data);
+  Future<TaskModel?> createTask(TaskModel task) async {
+    try {
+      final response = await _dio.post(
+        ApiEndpoints.tasks,
+        options: Options(
+          headers: {
+            ApiCustomHeaders.xParseSessionToken:
+                _authRepository.currentUser?.sessionToken,
+          },
+        ),
+        data: task.toJson(), // directly use model’s JSON
+      );
+
+      // Merge response data (objectId, createdAt, etc.)
+      final created = {...task.toJson(), ...response.data};
+
+      return TaskModel.fromJson(created);
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> updateTask(String id, Map<String, dynamic> data) async {
-    await _dio.put('/Task/$id', data: data);
+  Future<TaskModel?> updateTask(TaskModel task) async {
+    try {
+      final response = await _dio.put(
+        ApiEndpoints.taskById(task.objectId), // use model’s id
+        options: Options(
+          headers: {
+            ApiCustomHeaders.xParseSessionToken:
+                _authRepository.currentUser?.sessionToken,
+          },
+        ),
+        data: task.toJson(), // send updated model
+      );
+
+      final updated = {...task.toJson(), ...response.data};
+      return TaskModel.fromJson(updated);
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> deleteTask(String id) async {
-    await _dio.delete('/Task/$id');
+  /// Delete task
+  Future<void> deleteTask(TaskModel task) async {
+    try {
+      await _dio.delete(
+        ApiEndpoints.taskById(task.objectId),
+        options: Options(
+          headers: {
+            ApiCustomHeaders.xParseSessionToken:
+                _authRepository.currentUser?.sessionToken,
+          },
+        ),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 }
