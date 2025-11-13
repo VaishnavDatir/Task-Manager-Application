@@ -2,7 +2,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/utils/ui_utils.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -10,6 +9,7 @@ import '../../../core/models/task_model.dart';
 import '../../../core/routing/app_navigator.dart';
 import '../../../core/routing/route_names.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/ui_utils.dart';
 import '../../task/view/create_task_screen.dart';
 import '../../task/view/task_detail_screen.dart';
 import '../view_model/home_viewmodel.dart';

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/wow_task_logo.dart';
+
 Future<void> showAboutAppSheet(BuildContext context) async {
-  // Preload version info first (no UI work yet)
   final info = await PackageInfo.fromPlatform();
 
-  // If the context is no longer active, just return
   if (!context.mounted) return;
 
   showModalBottomSheet(
@@ -39,18 +40,21 @@ Future<void> showAboutAppSheet(BuildContext context) async {
                     ),
                   ),
                 ),
+                WowTaskLogo(),
+                const SizedBox(height: AppSpacing.md),
+
                 const Text(
                   'About WowTask',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 const Text(
                   'WowTask helps you organize your daily work efficiently. '
                   'You can create, edit, and track your tasks seamlessly '
                   'with a smooth and intuitive experience.',
-                  style: TextStyle(fontSize: 16, height: 1.5),
+                  style: TextStyle(fontSize: AppSpacing.md, height: 1.5),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: AppSpacing.lg),
                 ListTile(
                   leading: const Icon(Icons.app_settings_alt_outlined),
                   title: const Text('Version'),

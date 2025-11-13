@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../view_model/auth_viewmodel.dart';
-import 'widgets/widgets/about_app_sheet.dart';
+import 'widgets/about_app_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

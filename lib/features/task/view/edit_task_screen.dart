@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/repositories/task_repository.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/auth_repository.dart';
+import '../../../core/repositories/task_repository.dart';
+import '../../../core/routing/app_navigator.dart';
 import '../../../core/theme/app_colors.dart';
-import '../view_model/edit_task_viewmodel.dart';
+import '../view_model/task_view_model.dart';
 
 class EditTaskScreen extends StatelessWidget {
   final TaskModel task;
@@ -12,12 +14,13 @@ class EditTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => EditTaskViewModel(
-        task,
+    return ChangeNotifierProvider<TaskViewModel>(
+      create: (context) => TaskViewModel.edit(
+        task, 
         context.read<TaskRepository>(),
+        context.read<AuthRepository>(),
       ),
-      child: const _EditTaskView(),
+      child: _EditTaskView(), 
     );
   }
 }
@@ -27,7 +30,7 @@ class _EditTaskView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<EditTaskViewModel>();
+final vm = context.watch<TaskViewModel>();
     final theme = Theme.of(context);
 
     return GestureDetector(
@@ -152,9 +155,8 @@ class _EditTaskView extends StatelessWidget {
                     ? null
                     : () async {
                         final updated = await vm.updateTask();
-                        if (updated != null && context.mounted) {
-                          Navigator.of(context).pop(updated);
-                        }
+                        if (!context.mounted) return;
+                        if (updated != null) AppNavigator.goBack(updated);
                       },
                 child: vm.isLoading
                     ? const SizedBox(
@@ -173,7 +175,7 @@ class _EditTaskView extends StatelessWidget {
 
   Widget _priorityChip(
     BuildContext context,
-    EditTaskViewModel vm,
+    TaskViewModel vm,
     TaskPriority p,
     String label,
   ) {

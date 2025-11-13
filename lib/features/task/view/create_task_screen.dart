@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wowtask/core/routing/app_navigator.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/auth_repository.dart';
+import '../../../core/repositories/task_repository.dart';
+import '../../../core/routing/app_navigator.dart';
 import '../../../core/theme/app_colors.dart';
-import '../view_model/create_task_viewmodel.dart';
+import '../view_model/task_view_model.dart';
 
 class CreateTaskScreen extends StatelessWidget {
   const CreateTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const _CreateTaskView();
+    return ChangeNotifierProvider<TaskViewModel>(
+      create: (context) => TaskViewModel.create(
+        context.read<TaskRepository>(),
+        context.read<AuthRepository>(),
+      ),
+      child: const _CreateTaskView(), // your existing UI
+    );
   }
 }
 
@@ -20,7 +28,7 @@ class _CreateTaskView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<CreateTaskViewModel>();
+    final vm = context.watch<TaskViewModel>();
     final theme = Theme.of(context);
 
     return GestureDetector(
@@ -224,7 +232,7 @@ class _CreateTaskView extends StatelessWidget {
 
   Widget _priorityChip(
     BuildContext context,
-    CreateTaskViewModel vm,
+    TaskViewModel vm,
     TaskPriority p,
     String label,
   ) {

@@ -3,9 +3,7 @@ import 'package:provider/single_child_widget.dart';
 
 import '../../features/auth/view_model/auth_viewmodel.dart';
 import '../../features/home/view_model/home_viewmodel.dart';
-import '../../features/profile/view_model/profile_viewmodel.dart';
 import '../../features/splash/view_model/splash_view_model.dart';
-import '../../features/task/view_model/create_task_viewmodel.dart';
 import '../network/api_client.dart';
 import '../repositories/auth_repository.dart';
 import '../repositories/task_repository.dart';
@@ -34,12 +32,6 @@ class AppProviders {
     ChangeNotifierProvider<SplashViewModel>(
       create: (context) => SplashViewModel(context.read<AppPreferences>()),
     ),
-    ChangeNotifierProvider<ProfileViewModel>(
-      create: (context) => ProfileViewModel(
-        context.read<AuthRepository>(),
-        context.read<AppPreferences>(),
-      ),
-    ),
     ChangeNotifierProvider<AuthViewModel>(
       create: (context) => AuthViewModel(
         context.read<AuthRepository>(),
@@ -48,12 +40,6 @@ class AppProviders {
     ),
     ChangeNotifierProvider<HomeViewModel>(
       create: (context) => HomeViewModel(
-        context.read<TaskRepository>(),
-        context.read<AuthRepository>(),
-      ),
-    ),
-    ChangeNotifierProvider<CreateTaskViewModel>(
-      create: (context) => CreateTaskViewModel(
         context.read<TaskRepository>(),
         context.read<AuthRepository>(),
       ),

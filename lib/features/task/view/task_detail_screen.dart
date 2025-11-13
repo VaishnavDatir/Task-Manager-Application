@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/auth_repository.dart';
 import '../../../core/repositories/task_repository.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import '../view_model/task_detail_viewmodel.dart';
+import '../view_model/task_view_model.dart';
 
 class TaskDetailScreen extends StatelessWidget {
   final TaskModel task;
@@ -15,9 +16,13 @@ class TaskDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => TaskDetailViewModel(task, context.read<TaskRepository>()),
-      child: const _TaskDetailView(),
+    return ChangeNotifierProvider<TaskViewModel>(
+      create: (context) => TaskViewModel.view(
+        task,
+        context.read<TaskRepository>(),
+        context.read<AuthRepository>(),
+      ),
+      child: _TaskDetailView(), // your UI
     );
   }
 }
@@ -27,7 +32,7 @@ class _TaskDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<TaskDetailViewModel>();
+    final vm = context.watch<TaskViewModel>();
     final task = vm.task;
     final theme = Theme.of(context);
 
@@ -37,7 +42,7 @@ class _TaskDetailView extends StatelessWidget {
         elevation: 0,
         iconTheme: theme.iconTheme,
         title: Hero(
-          tag: 'task-title-${task.objectId}',
+          tag: 'task-title-${task!.objectId}',
           child: Material(
             color: Colors.transparent,
             child: Text(
@@ -52,7 +57,9 @@ class _TaskDetailView extends StatelessWidget {
         actions: [
           IconButton(
             tooltip: 'Edit',
-            onPressed: vm.isLoading ? null : () => vm.editTask(context),
+            onPressed: vm.isLoading
+                ? null
+                : () async => await vm.editTaskBtnAction(),
             icon: const Icon(Icons.edit_outlined),
           ),
           IconButton(

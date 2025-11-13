@@ -110,10 +110,10 @@ class AuthViewModel extends ChangeNotifier {
       _user = null;
       _setStatus(AuthStatus.idle);
 
-      log.i('🚪 User logged out');
+      log.i('User logged out');
       AppNavigator.goToLogin();
     } catch (e, st) {
-      log.e('❌ Logout failed', error: e, stackTrace: st);
+      log.e('Logout failed', error: e, stackTrace: st);
     }
   }
 

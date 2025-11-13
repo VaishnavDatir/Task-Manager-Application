@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:wowtask/core/models/task_model.dart';
+
+import '../models/task_model.dart';
 
 class UiUtils {
   static Color getStatusColor(TaskModel task, String selectedFilter) {
