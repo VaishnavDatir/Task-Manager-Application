@@ -1,50 +1,70 @@
-// lib/features/task/view_model/task_detail_viewmodel.dart
 import 'package:flutter/material.dart';
 import 'package:wowtask/core/routing/app_navigator.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/task_repository.dart';
 import '../../../core/routing/route_names.dart';
 
-/// ViewModel for Task Detail - simple local updates + placeholders for repo calls.
 class TaskDetailViewModel extends ChangeNotifier {
+  final TaskRepository _taskRepository;
+
   TaskModel _task;
   bool _isLoading = false;
   String? _error;
 
-  TaskDetailViewModel(this._task);
+  TaskDetailViewModel(this._task, this._taskRepository);
 
+  // GETTERS
   TaskModel get task => _task;
   bool get isLoading => _isLoading;
   String? get errorMessage => _error;
 
   bool get isCompleted => _task.status.toLowerCase() == 'completed';
 
+  // PRIVATE METHOD
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+
+  //  MARK TASK AS COMPLETED
   Future<void> markAsComplete() async {
     if (isCompleted) return;
+
     _setLoading(true);
     try {
-      // TODO: call repository to mark complete. Simulate delay for now.
-      await Future.delayed(const Duration(milliseconds: 450));
-      _task = _task.copyWith(status: 'Completed', updatedAt: DateTime.now());
-      _error = null;
-      notifyListeners();
+      final updatedTask = _task.copyWith(
+        status: 'Completed',
+        updatedAt: DateTime.now(),
+      );
+
+      final result = await _taskRepository.updateTask(updatedTask);
+
+      if (result != null) {
+        _task = result;
+        _error = null;
+        notifyListeners();
+      }
     } catch (e) {
-      _error = 'Failed to mark complete';
+      _error = "Failed to mark as completed";
       notifyListeners();
     } finally {
       _setLoading(false);
     }
   }
 
-  Future<void> deleteTask(BuildContext context) async {
+  Future<void> deleteTask() async {
     _setLoading(true);
     try {
-      // TODO: actually delete via repository
-      await Future.delayed(const Duration(milliseconds: 400));
-      // return to previous screen with deleted result
-      AppNavigator.goBack();
+      await _taskRepository.deleteTask(_task);
+      AppNavigator.goBack("deleted");
     } catch (e) {
-      _error = 'Failed to delete';
+      _error = "Failed to delete task";
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -58,19 +78,9 @@ class TaskDetailViewModel extends ChangeNotifier {
       extra: task,
     );
 
-    if (updatedTask != null) {
-      
+    if (updatedTask is TaskModel) {
+      _task = updatedTask;
       notifyListeners();
     }
-  }
-
-  void _setLoading(bool v) {
-    _isLoading = v;
-    notifyListeners();
-  }
-
-  void clearError() {
-    _error = null;
-    notifyListeners();
   }
 }

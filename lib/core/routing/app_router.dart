@@ -3,10 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/view/login_screen.dart';
+import '../../features/auth/view/profile_screen.dart';
 import '../../features/auth/view/signup_screen.dart';
 import '../../features/auth/view/welcome_screen.dart';
 import '../../features/home/view/home_screen.dart';
-import '../../features/profile/view/profile_screen.dart';
 import '../../features/splash/view/splash_screen.dart';
 import '../../features/task/view/create_task_screen.dart';
 import '../../features/task/view/edit_task_screen.dart';
@@ -42,7 +42,7 @@ class AppRouter {
         ..._taskRoutes,
         ..._errorRoutes,
       ],
-      // redirect: authGuard.checkAuth,
+      redirect: authGuard.checkAuth,
       errorBuilder: (context, state) => const ErrorScreen(),
     );
 

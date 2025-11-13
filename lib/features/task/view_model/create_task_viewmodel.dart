@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/v6.dart';
+import 'package:uuid/v8.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/auth_repository.dart';
+import '../../../core/repositories/task_repository.dart' show TaskRepository;
 
 class CreateTaskViewModel extends ChangeNotifier {
+final TaskRepository _taskRepository;
+  final AuthRepository _authRepository;
+  CreateTaskViewModel(this._taskRepository, this._authRepository);
+
   // Form + controllers
   final formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
@@ -111,15 +117,19 @@ class CreateTaskViewModel extends ChangeNotifier {
       // Simulate API call
       await Future.delayed(const Duration(milliseconds: 800));
 
-      final task = TaskModel(
-        objectId: UuidV6().toString(),
+      TaskModel? task = TaskModel(
+        objectId: "",
+        taskId: UuidV8().generate().toString(),
         title: titleController.text.trim(),
         description: descriptionController.text.trim(),
         priority: selectedPriority,
         dueDate: dueDate!,
         createdAt: DateTime.now(),
+        createdBy: _authRepository.currentUser?.id
       );
-
+      
+      task = await _taskRepository.createTask(task);
+      
       isLoading = false;
       notifyListeners();
       return task;

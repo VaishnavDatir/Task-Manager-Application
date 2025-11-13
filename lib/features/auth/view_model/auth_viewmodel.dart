@@ -11,7 +11,6 @@ enum AuthStatus { idle, loading, success, error }
 class AuthViewModel extends ChangeNotifier {
   final AuthRepository _authRepo;
   final AppPreferences _prefs;
-  final AppLogger _logger = AppLogger();
 
   AuthViewModel(this._authRepo, this._prefs);
 
@@ -26,9 +25,19 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _status == AuthStatus.loading;
   bool get isLoggedIn => _user != null;
 
-  // ------------------------
-  // 🔑 LOGIN
-  // ------------------------
+  /// Load profile from logged-in user
+  Future<void> loadProfile() async {
+    _setStatus(AuthStatus.loading);
+    notifyListeners();
+
+    // Simply read user stored in AuthRepository
+    _user = _authRepo.currentUser;
+
+    _setStatus(AuthStatus.success);
+    notifyListeners();
+  }
+
+  // LOGIN
   Future<void> login(String username, String password) async {
     _setStatus(AuthStatus.loading);
 
@@ -43,22 +52,20 @@ class AuthViewModel extends ChangeNotifier {
       _setStatus(AuthStatus.success);
 
       await _prefs.saveUserModel(user);
-      _logger.i('✅ Logged in as ${user.fullName}');
+      log.i('Logged in as ${user.fullName}');
       AppNavigator.goToHome();
     } on AuthException catch (e) {
       _errorMessage = e.message;
       _setStatus(AuthStatus.error);
-      _logger.w('⚠️ AuthException: ${e.message}');
+      log.w('AuthException: ${e.message}');
     } catch (e, st) {
       _errorMessage = 'Something went wrong. Please try again.';
       _setStatus(AuthStatus.error);
-      _logger.e('❌ Unexpected login error', error: e, stackTrace: st);
+      log.e('Unexpected login error', error: e, stackTrace: st);
     }
   }
 
-  // ------------------------
-  // 🟣 SIGNUP
-  // ------------------------
+  //  SIGNUP
   Future<void> signup({
     required String username,
     required String phone,
@@ -81,22 +88,20 @@ class AuthViewModel extends ChangeNotifier {
       _setStatus(AuthStatus.success);
 
       await _prefs.saveUserModel(user!);
-      _logger.i('Signup successful: ${user.email}');
+      log.i('Signup successful: ${user.email}');
       AppNavigator.goToLogin();
     } on AuthException catch (e) {
       _errorMessage = e.message;
       _setStatus(AuthStatus.error);
-      _logger.w('Signup AuthException: ${e.message}');
+      log.w('Signup AuthException: ${e.message}');
     } catch (e, st) {
       _errorMessage = 'Something went wrong during signup.';
       _setStatus(AuthStatus.error);
-      _logger.e('Unexpected signup error', error: e, stackTrace: st);
+      log.e('Unexpected signup error', error: e, stackTrace: st);
     }
   }
 
-  // ------------------------
-  // 🚪 LOGOUT
-  // ------------------------
+  //  LOGOUT
   Future<void> logout() async {
     try {
       await _authRepo.logout();
@@ -105,16 +110,14 @@ class AuthViewModel extends ChangeNotifier {
       _user = null;
       _setStatus(AuthStatus.idle);
 
-      _logger.i('🚪 User logged out');
+      log.i('🚪 User logged out');
       AppNavigator.goToLogin();
     } catch (e, st) {
-      _logger.e('❌ Logout failed', error: e, stackTrace: st);
+      log.e('❌ Logout failed', error: e, stackTrace: st);
     }
   }
 
-  // ------------------------
-  // 🔁 AUTO LOGIN
-  // ------------------------
+  // AUTO LOGIN
   Future<void> tryAutoLogin() async {
     try {
       final cachedUser = _prefs.getUserModel();
@@ -123,18 +126,16 @@ class AuthViewModel extends ChangeNotifier {
         _user = cachedUser;
         _setStatus(AuthStatus.success);
 
-        _logger.i('🔄 Auto-login restored for ${cachedUser.fullName}');
+        log.i('🔄 Auto-login restored for ${cachedUser.fullName}');
       } else {
-        _logger.i('ℹ️ No cached session found');
+        log.i('ℹ️ No cached session found');
       }
     } catch (e, st) {
-      _logger.e('❌ Auto-login failed', error: e, stackTrace: st);
+      log.e('❌ Auto-login failed', error: e, stackTrace: st);
     }
   }
 
-  // ------------------------
-  // 🧹 UTILITIES
-  // ------------------------
+  //  UTILITIES
   void clearError() {
     _errorMessage = null;
     notifyListeners();

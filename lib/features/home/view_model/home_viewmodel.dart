@@ -41,8 +41,44 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
+  // FILTER LOGIC
   List<TaskModel> getFilteredTasks(String filter) {
-    if (filter == "All") return _tasks;
-    return _tasks.where((task) => task.status == filter).toList();
+    final now = DateTime.now();
+
+    switch (filter) {
+      case "Today":
+        return _tasks.where((task) => _isSameDate(task.dueDate, now)).toList();
+
+      case "Past Due":
+        return _tasks
+            .where(
+              (task) =>
+                  task.dueDate.isBefore(
+                    DateTime(now.year, now.month, now.day),
+                  ) &&
+                  task.status != "Completed",
+            )
+            .toList();
+
+      case "Upcoming":
+        return _tasks
+            .where(
+              (task) =>
+                  task.dueDate.isAfter(DateTime(now.year, now.month, now.day)),
+            )
+            .toList();
+
+      case "Completed":
+        return _tasks.where((task) => task.status == "Completed").toList();
+
+      default:
+        return _tasks;
+    }
   }
+
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+
 }

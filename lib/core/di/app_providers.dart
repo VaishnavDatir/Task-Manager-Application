@@ -34,7 +34,12 @@ class AppProviders {
     ChangeNotifierProvider<SplashViewModel>(
       create: (context) => SplashViewModel(context.read<AppPreferences>()),
     ),
-    ChangeNotifierProvider<ProfileViewModel>(create: (_) => ProfileViewModel()),
+    ChangeNotifierProvider<ProfileViewModel>(
+      create: (context) => ProfileViewModel(
+        context.read<AuthRepository>(),
+        context.read<AppPreferences>(),
+      ),
+    ),
     ChangeNotifierProvider<AuthViewModel>(
       create: (context) => AuthViewModel(
         context.read<AuthRepository>(),
@@ -48,7 +53,10 @@ class AppProviders {
       ),
     ),
     ChangeNotifierProvider<CreateTaskViewModel>(
-      create: (_) => CreateTaskViewModel(),
+      create: (context) => CreateTaskViewModel(
+        context.read<TaskRepository>(),
+        context.read<AuthRepository>(),
+      ),
     ),
   ];
 }

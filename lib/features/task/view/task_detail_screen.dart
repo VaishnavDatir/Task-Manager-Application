@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/task_repository.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../view_model/task_detail_viewmodel.dart';
@@ -15,7 +16,7 @@ class TaskDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TaskDetailViewModel(task),
+      create: (_) => TaskDetailViewModel(task, context.read<TaskRepository>()),
       child: const _TaskDetailView(),
     );
   }
@@ -83,7 +84,7 @@ class _TaskDetailView extends StatelessWidget {
                     );
 
                     if (confirmed == true && context.mounted) {
-                      await vm.deleteTask(context);
+                      await vm.deleteTask();
                     }
                   },
             icon: const Icon(Icons.delete_outline),

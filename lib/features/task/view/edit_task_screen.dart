@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wowtask/core/repositories/task_repository.dart';
 
 import '../../../core/models/task_model.dart';
-import '../../../core/network/api_client.dart';
-import '../../../core/storage/app_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 import '../view_model/edit_task_viewmodel.dart';
 
@@ -16,8 +15,7 @@ class EditTaskScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => EditTaskViewModel(
         task,
-        context.read<ApiClient>(), // example dependency
-        context.read<AppPreferences>(), // example dependency
+        context.read<TaskRepository>(),
       ),
       child: const _EditTaskView(),
     );

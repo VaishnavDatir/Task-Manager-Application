@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wowtask/core/utils/ui_utils.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -60,16 +61,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           subtitle: Text(
-            'Due: ${task.dueDate.day}/${task.dueDate.month}/${task.dueDate.year}',
+            UiUtils.formatDueDate(task.dueDate)
           ),
           trailing: Icon(
             task.status == 'Completed' ? Icons.check_circle : Icons.schedule,
-            color: task.status == 'Completed' ? Colors.green : Colors.orange,
+            color: UiUtils.getStatusColor(task, selectedFilter),
           ),
         ),
       ),
     );
   }
+
+  
 
   Widget _buildFilterChip(String label, IconData icon, Color color) {
     final bool isSelected = selectedFilter == label;
@@ -131,6 +134,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ).floatingActionButtonTheme.backgroundColor,
               child: const Icon(Icons.create),
             );
+          },
+          onClosed: (createdTask) {
+            if (createdTask != null) {
+              taskVM.fetchTasks();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Task Created Successfully")),
+              );
+            }
           },
           openBuilder: (context, closeContainer) {
             return const CreateTaskScreen();
@@ -353,6 +364,11 @@ class _HomeScreenState extends State<HomeScreen> {
             openBuilder: (context, _) => TaskDetailScreen(task: task),
             closedBuilder: (context, open) =>
                 GestureDetector(onTap: open, child: _taskCard(task)),
+            onClosed: (createdTask) {
+              if (createdTask != null) {
+                taskVM.fetchTasks();
+              }
+            },
           ),
         );
       }).toList(),

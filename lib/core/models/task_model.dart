@@ -4,6 +4,7 @@ enum TaskPriority { low, medium, high }
 
 class TaskModel {
   final String objectId; // Back4App unique ID
+  final String? taskId;
   final String title;
   final String description;
   final DateTime dueDate;
@@ -15,6 +16,7 @@ class TaskModel {
 
   TaskModel({
     required this.objectId,
+    this.taskId,
     required this.title,
     required this.description,
     required this.dueDate,
@@ -28,6 +30,7 @@ class TaskModel {
   // 🧩 Copy with
   TaskModel copyWith({
     String? objectId,
+    String? taskId,
     String? title,
     String? description,
     DateTime? dueDate,
@@ -39,6 +42,7 @@ class TaskModel {
   }) {
     return TaskModel(
       objectId: objectId ?? this.objectId,
+      taskId: taskId ?? this.taskId,
       title: title ?? this.title,
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
@@ -53,6 +57,7 @@ class TaskModel {
   //  To JSON (for Back4App)
   Map<String, dynamic> toJson({String? userId}) {
     final map = {
+      "taskId": taskId,
       "title": title,
       "description": description,
       "dueDate": {"__type": "Date", "iso": dueDate.toUtc().toIso8601String()},
@@ -94,6 +99,7 @@ class TaskModel {
 
     return TaskModel(
       objectId: json["objectId"] ?? "",
+      taskId: json["taskId"] ?? "",
       title: json["title"] ?? "",
       description: json["description"] ?? "",
       dueDate: parseDate(json["dueDate"]),

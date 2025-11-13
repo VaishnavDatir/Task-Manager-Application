@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wowtask/core/routing/app_navigator.dart';
 
 import '../../../core/models/task_model.dart';
 import '../../../core/theme/app_colors.dart';
@@ -10,10 +11,7 @@ class CreateTaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CreateTaskViewModel(),
-      child: const _CreateTaskView(),
-    );
+    return const _CreateTaskView();
   }
 }
 
@@ -185,9 +183,19 @@ class _CreateTaskView extends StatelessWidget {
                     ? null
                     : () async {
                         final created = await vm.submit();
-                        if (created != null && context.mounted) {
-                          Navigator.of(context).pop(created);
-                        } else if (vm.errorMessage != null) {
+                        if (!context.mounted) return;
+
+                        if (created != null) {
+                          await Future.delayed(
+                            const Duration(milliseconds: 400),
+                          );
+
+                          if (!context.mounted) return;
+                          AppNavigator.goBack(created);
+                          return;
+                        }
+                        // Error case
+                        if (vm.errorMessage != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(vm.errorMessage!)),
                           );

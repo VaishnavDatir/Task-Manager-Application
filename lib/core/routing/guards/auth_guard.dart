@@ -13,6 +13,7 @@ class AuthGuard {
   Future<String?> checkAuth(BuildContext context, GoRouterState state) async {
     final isLoggedIn = prefs.isLoggedIn;
 
+    // Allow splash to load without redirect
     if (state.matchedLocation == AppRoutes.splash) return null;
 
     final isAuthRoute =
@@ -21,15 +22,15 @@ class AuthGuard {
         state.matchedLocation.startsWith(AppRoutes.register);
 
     if (!isLoggedIn && !isAuthRoute) {
-      // Redirect to welcome page
+      // User not logged in → redirect to welcome
       return AppRoutes.welcome;
     }
 
     if (isLoggedIn && isAuthRoute) {
-      // Redirect logged-in users away from login/welcome
+      // User already logged in → redirect to home/dashboard
       return AppRoutes.home;
     }
 
-    return null; // No redirect
+    return null; // ✅ No redirect needed
   }
 }

@@ -57,8 +57,10 @@ class AppNavigator {
   }
 
   /// Go back if possible
-  static void goBack() {
-    if (_router.canPop()) _router.pop();
+  static void goBack([dynamic result]) {
+    if (_router.canPop()) {
+      _router.pop(result);
+    }
   }
 
   // ---------------- Native Navigator-based navigation ----------------
@@ -85,7 +87,4 @@ class AppNavigator {
   static void goToLogin() => goToNamed(RouteNames.login);
   static void goToTaskDetail(String id) =>
       goToNamed(RouteNames.taskDetail, params: {'id': id});
-
-  
-
 }
