@@ -168,7 +168,42 @@ flutter run
 ```
 
 ------------------------------------------------------------------------
+# 📸 App Screenshots
 
+## Welcome & Authentication
+
+```{=html}
+<p align="center">
+```
+`<img src="screenshots/welcome.png" width="30%" />`{=html}
+`<img src="screenshots/login.png" width="30%" />`{=html}
+`<img src="screenshots/signup.png" width="30%" />`{=html}
+```{=html}
+</p>
+```
+## Home Screens
+
+```{=html}
+<p align="center">
+```
+`<img src="screenshots/home1.png" width="30%" />`{=html}
+`<img src="screenshots/home2.png" width="30%" />`{=html}
+`<img src="screenshots/home3.png" width="30%" />`{=html}
+```{=html}
+</p>
+```
+## Task Management
+
+```{=html}
+<p align="center">
+```
+`<img src="screenshots/createTask.png" width="30%" />`{=html}
+`<img src="screenshots/editeTask.png" width="30%" />`{=html}
+`<img src="screenshots/taskDetail.png" width="30%" />`{=html}
+```{=html}
+</p>
+```
+------------------------------------------------------------------------
 
 ### ⭐ Show Support
 

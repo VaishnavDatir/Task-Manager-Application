@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../core/models/task_model.dart';
+import '../../../core/repositories/auth_repository.dart';
 import '../../../core/routing/app_navigator.dart';
 import '../../../core/routing/route_names.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeViewModel>().fetchTasks();
+      context.read<AuthRepository>();
     });
   }
 
@@ -160,6 +162,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildAppBar(BuildContext context) {
+    final authRepo = context.watch<AuthRepository>();
+
     return SliverLayoutBuilder(
       builder: (context, constraints) {
         final scrollOffset = constraints.scrollOffset;
@@ -204,7 +208,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       TextSpan(
-                        text: 'Vaishnav!',
+                        text:
+                            '${authRepo.currentUser!.fullName.split(" ")[0]}!',
                         style: AppTypography.poppins(
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
@@ -252,7 +257,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                               TextSpan(
-                                text: 'Vaishnav!',
+                                text:
+                                    '${authRepo.currentUser!.fullName.split(" ")[0]}!',
                                 style: AppTypography.poppins(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w600,
