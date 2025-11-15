@@ -5,6 +5,8 @@ using **Flutter**, following the **MVVM architecture**, powered by
 **Provider**, and integrated with **Back4App** for secure authentication
 and task management.
 
+👉 **https://www.youtube.com/watch?v=gA4U8qqic1E**
+
 ### 🧑‍💻 About the Developer
 
 **Vaishnav Datir**\
@@ -168,41 +170,32 @@ flutter run
 ```
 
 ------------------------------------------------------------------------
-# 📸 App Screenshots
+### 📸 App Screenshots
 
-## Welcome & Authentication
+#### Welcome & Authentication
 
-```{=html}
 <p align="center">
-```
-`<img src="screenshots/welcome.png" width="30%" />`{=html}
-`<img src="screenshots/login.png" width="30%" />`{=html}
-`<img src="screenshots/signup.png" width="30%" />`{=html}
-```{=html}
+<img src="screenshots/welcome.png" width="30%" >
+<img src="screenshots/login.png" width="30%" />
+<img src="screenshots/signup.png" width="30%" />
 </p>
-```
-## Home Screens
 
-```{=html}
-<p align="center">
-```
-`<img src="screenshots/home1.png" width="30%" />`{=html}
-`<img src="screenshots/home2.png" width="30%" />`{=html}
-`<img src="screenshots/home3.png" width="30%" />`{=html}
-```{=html}
-</p>
-```
-## Task Management
+#### Home Screens
 
-```{=html}
 <p align="center">
-```
-`<img src="screenshots/createTask.png" width="30%" />`{=html}
-`<img src="screenshots/editeTask.png" width="30%" />`{=html}
-`<img src="screenshots/taskDetail.png" width="30%" />`{=html}
-```{=html}
+<img src="screenshots/home1.png" width="30%" />
+<img src="screenshots/home2.png" width="30%" />
+<img src="screenshots/home3.png" width="30%" />
 </p>
-```
+
+#### Task Management
+
+<p align="center">
+<img src="screenshots/createTask.png" width="30%" />
+<img src="screenshots/editeTask.png" width="30%" />
+<img src="screenshots/taskDetail.png" width="30%" />
+</p>
+
 ------------------------------------------------------------------------
 
 ### ⭐ Show Support
