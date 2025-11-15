@@ -47,7 +47,12 @@ class HomeViewModel extends ChangeNotifier {
 
     switch (filter) {
       case "Today":
-        return _tasks.where((task) => _isSameDate(task.dueDate, now)).toList();
+        return _tasks
+            .where(
+              (task) =>
+                  task.status != "Completed" && _isSameDate(task.dueDate, now),
+            )
+            .toList();
 
       case "Past Due":
         return _tasks
@@ -64,6 +69,7 @@ class HomeViewModel extends ChangeNotifier {
         return _tasks
             .where(
               (task) =>
+                  task.status != "Completed" &&
                   task.dueDate.isAfter(DateTime(now.year, now.month, now.day)),
             )
             .toList();

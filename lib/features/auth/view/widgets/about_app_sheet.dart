@@ -40,12 +40,16 @@ Future<void> showAboutAppSheet(BuildContext context) async {
                     ),
                   ),
                 ),
-                WowTaskLogo(),
+                Center(
+                  child: WowTaskLogo(bgColor: Theme.of(context).cardColor),
+                ),
                 const SizedBox(height: AppSpacing.md),
 
-                const Text(
-                  'About WowTask',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                Center(
+                  child: const Text(
+                    'About',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 const Text(

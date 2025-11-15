@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_typography.dart';
+import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 
 class WowTaskLogo extends StatelessWidget {
   final double? fontSize;
   final bool showShadow;
+  final Color? bgColor;
 
-  const WowTaskLogo({super.key, this.fontSize, this.showShadow = false});
+  const WowTaskLogo({
+    super.key,
+    this.fontSize,
+    this.showShadow = false,
+    this.bgColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +37,20 @@ class WowTaskLogo extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.task_alt_rounded, size: 100, color: Colors.white),
+        Icon(
+          Icons.task_alt_rounded,
+          size: 100,
+          color: bgColor == AppColors.surface ? AppColors.accent : Colors.white,
+        ),
         const SizedBox(height: AppSpacing.lg),
         RichText(
           text: TextSpan(
             style: AppTypography.poppins(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: bgColor == AppColors.surface
+                  ? AppColors.accent
+                  : Colors.white,
             ),
             children: [
               TextSpan(
@@ -45,7 +58,9 @@ class WowTaskLogo extends StatelessWidget {
                 style: AppTypography.poppins(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: bgColor == AppColors.surface
+                      ? AppColors.accent
+                      : Colors.white,
                   fontStyle: FontStyle.normal,
                 ),
               ),
@@ -54,7 +69,9 @@ class WowTaskLogo extends StatelessWidget {
                 style: AppTypography.inter(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: bgColor == AppColors.surface
+                      ? AppColors.accent
+                      : Colors.white,
                   fontStyle: FontStyle.italic,
                 ),
               ),

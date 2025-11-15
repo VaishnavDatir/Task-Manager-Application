@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../view_model/task_view_model.dart';
 
 class CreateTaskScreen extends StatelessWidget {
+
   const CreateTaskScreen({super.key});
 
   @override
@@ -18,12 +19,13 @@ class CreateTaskScreen extends StatelessWidget {
         context.read<TaskRepository>(),
         context.read<AuthRepository>(),
       ),
-      child: const _CreateTaskView(), // your existing UI
+      child: _CreateTaskView(), // your existing UI
     );
   }
 }
 
 class _CreateTaskView extends StatelessWidget {
+
   const _CreateTaskView();
 
   @override
@@ -122,10 +124,7 @@ class _CreateTaskView extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Due date/time selector
-                    Text(
-                      'Due Time',
-                      style: theme.textTheme.titleMedium,
-                    ),
+                    Text('Due Time', style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     InkWell(
                       onTap: vm.isLoading
@@ -191,24 +190,32 @@ class _CreateTaskView extends StatelessWidget {
                     ? null
                     : () async {
                         final created = await vm.submit();
-                        if (!context.mounted) return;
 
                         if (created != null) {
                           await Future.delayed(
                             const Duration(milliseconds: 400),
                           );
 
-                          if (!context.mounted) return;
-                          AppNavigator.goBack(created);
-                          return;
-                        }
-                        // Error case
-                        if (vm.errorMessage != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(vm.errorMessage!)),
+                            const SnackBar(
+                              content: Text("Task Created Successfully"),
+                            ),
                           );
-                          vm.clearError();
+                          await Future.delayed(
+                            const Duration(milliseconds: 400),
+                          );
+                          AppNavigator.goBack(); 
+                          return;
+                        } else {
+                          if (vm.errorMessage != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(vm.errorMessage!)),
+                            );
+                            vm.clearError();
+                          }
                         }
+
+                        
                       },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(

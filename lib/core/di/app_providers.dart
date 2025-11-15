@@ -30,7 +30,10 @@ class AppProviders {
 
     // ViewModels
     ChangeNotifierProvider<SplashViewModel>(
-      create: (context) => SplashViewModel(context.read<AppPreferences>()),
+      create: (context) => SplashViewModel(
+        context.read<AppPreferences>(),
+        context.read<AuthRepository>(),
+      ),
     ),
     ChangeNotifierProvider<AuthViewModel>(
       create: (context) => AuthViewModel(

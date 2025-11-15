@@ -19,7 +19,7 @@ class ApiClient {
   void _setupDio() {
     final baseUrl = dotenv.env['BACK4APP_BASE_URL']!;
     final appId = dotenv.env['BACK4APP_APPLICATION_ID']!;
-    final apiKey = dotenv.env['BACK4APP_REST_API_KEY']!;
+    final apiKey = dotenv.env['BACK4APP_CLIENT_API_KEY']!;
 
     dio = Dio(
       BaseOptions(
@@ -29,7 +29,7 @@ class ApiClient {
         headers: {
           Headers.contentTypeHeader: ContentType.json.value,
           ApiCustomHeaders.xParseApplicationId: appId,
-          ApiCustomHeaders.xParseRestApiKey: apiKey,
+          ApiCustomHeaders.xParseClientKey: apiKey,
         },
       ),
     );
@@ -47,6 +47,7 @@ class ApiClient {
           return handler.next(response);
         },
         onError: (DioException e, handler) {
+          log.e("[Error] api response: ${e.response}");
           log.e("[Error] ${e.message}");
           return handler.next(e);
         },

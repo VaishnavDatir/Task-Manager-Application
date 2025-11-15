@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../../core/network/api_endpoints.dart';
@@ -11,10 +13,17 @@ class TaskRepository {
 
   TaskRepository(this._dio, this._authRepository);
 
-  /// 🔹 Fetch all tasks belonging to current user
+  /// Fetch all tasks belonging to current user
   Future<List<TaskModel>> fetchTasks(String userId) async {
     try {
-      // Back4App query to get tasks where createdBy.userId = current user
+      final whereQuery = {
+        "createdBy": {
+          "__type": "Pointer",
+          "className": "_User",
+          "objectId": userId,
+        },
+      };
+
       final response = await _dio.get(
         ApiEndpoints.tasks,
         options: Options(
@@ -24,7 +33,7 @@ class TaskRepository {
           },
         ),
         queryParameters: {
-          "where": '{"createdBy":"$userId"}',
+          "where": jsonEncode(whereQuery), 
           "order": "-createdAt",
         },
       );

@@ -16,27 +16,50 @@ class AuthRepository {
 
   UserModel? get currentUser => _currentUser;
 
+  void refreshCurrentUserData(UserModel? currUser) {
+    _currentUser = currUser;
+  }
+
   /// Login user
   Future<UserModel?> login(String username, String password) async {
     try {
       final response = await _dio.post(
         ApiEndpoints.login,
-        data: {'username': username, 'password': password},
+        data: {'username': username.trim(), 'password': password.trim()},
       );
 
       log.i('Login successful');
-      log.d(response.data);
+       
+      final savedDetalis = UserModel.fromJson(response.data);
 
-      final data = response.data;
+      _currentUser = await getCurrentUser(savedDetalis.sessionToken!);
+      _currentUser?.sessionToken = savedDetalis.sessionToken;
 
-      _currentUser = UserModel.fromJson(data);
       return _currentUser;
     } on DioException catch (e) {
-      final message = e.response?.data['error'] ?? 'Login failed';
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+
+      String message = 'Login failed';
+
+      if (status == 403) {
+        message = 'Unauthorized: Invalid credentials';
+      } else if (data is Map && data.containsKey('error')) {
+        message = data['error'];
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        message = 'Connection timed out. Check your internet.';
+      } else if (e.type == DioExceptionType.badResponse) {
+        message = 'Server error: ${e.response?.statusCode}';
+      }
+
       log.e('Login failed: $message');
       throw AuthException(message);
+    } catch (e) {
+      log.e('Unexpected login error: $e');
+      throw AuthException('Something went wrong. Try again later.');
     }
   }
+
 
   /// Signup user
   Future<UserModel?> signup({
@@ -63,7 +86,10 @@ class AuthRepository {
 
       final data = response.data;
 
-      _currentUser = UserModel.fromJson(data);
+      final savedDetalis = UserModel.fromJson(data);
+
+      _currentUser = await getCurrentUser(savedDetalis.sessionToken!);
+      _currentUser?.sessionToken = savedDetalis.sessionToken;
 
       return _currentUser;
     } on DioException catch (e) {

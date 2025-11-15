@@ -59,7 +59,16 @@ class AppNavigator {
   /// Go back if possible
   static void goBack([dynamic result]) {
     if (_router.canPop()) {
-      _router.pop(result);
+      result != null ? _router.pop(result) : _router.pop();
+    }
+  }
+
+  static void goBackByContext({BuildContext? context, dynamic result}) {
+    final ctx = context ?? rootNavigatorKey.currentContext;
+    if (ctx == null) return;
+
+    if (Navigator.of(ctx).canPop()) {
+      Navigator.of(ctx).pop(result);
     }
   }
 

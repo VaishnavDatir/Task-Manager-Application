@@ -19,6 +19,14 @@ class _SignupScreenState extends State<SignupScreen> {
   final _passwordCtrl = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthViewModel>().clearError();
+    });
+  }
+
+  @override
   void dispose() {
     _nameCtrl.dispose();
     _emailCtrl.dispose();
@@ -43,7 +51,6 @@ class _SignupScreenState extends State<SignupScreen> {
     final authVM = context.watch<AuthViewModel>();
     final isLoading = authVM.isLoading;
     final theme = Theme.of(context);
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(

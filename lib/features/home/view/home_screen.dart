@@ -136,12 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
           onClosed: (createdTask) {
-            if (createdTask != null) {
-              taskVM.fetchTasks();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Task Created Successfully")),
-              );
-            }
+            taskVM.fetchTasks();
           },
           openBuilder: (context, closeContainer) {
             return const CreateTaskScreen();

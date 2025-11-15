@@ -32,7 +32,6 @@ class AuthViewModel extends ChangeNotifier {
 
     // Simply read user stored in AuthRepository
     _user = _authRepo.currentUser;
-
     _setStatus(AuthStatus.success);
     notifyListeners();
   }
@@ -43,16 +42,15 @@ class AuthViewModel extends ChangeNotifier {
 
     try {
       final user = await _authRepo.login(username, password);
-      if (user == null) {
-        throw AuthException('User not found.');
-      }
 
       _user = user;
       _errorMessage = null;
       _setStatus(AuthStatus.success);
 
-      await _prefs.saveUserModel(user);
+      await _prefs.saveUserModel(user!);
+      
       log.i('Logged in as ${user.fullName}');
+
       AppNavigator.goToHome();
     } on AuthException catch (e) {
       _errorMessage = e.message;
@@ -64,6 +62,7 @@ class AuthViewModel extends ChangeNotifier {
       log.e('Unexpected login error', error: e, stackTrace: st);
     }
   }
+
 
   //  SIGNUP
   Future<void> signup({
@@ -89,7 +88,7 @@ class AuthViewModel extends ChangeNotifier {
 
       await _prefs.saveUserModel(user!);
       log.i('Signup successful: ${user.email}');
-      AppNavigator.goToLogin();
+      AppNavigator.goToHome();
     } on AuthException catch (e) {
       _errorMessage = e.message;
       _setStatus(AuthStatus.error);
@@ -126,12 +125,12 @@ class AuthViewModel extends ChangeNotifier {
         _user = cachedUser;
         _setStatus(AuthStatus.success);
 
-        log.i('🔄 Auto-login restored for ${cachedUser.fullName}');
+        log.i('Auto-login restored for ${cachedUser.fullName}');
       } else {
-        log.i('ℹ️ No cached session found');
+        log.i('No cached session found');
       }
     } catch (e, st) {
-      log.e('❌ Auto-login failed', error: e, stackTrace: st);
+      log.e('Auto-login failed', error: e, stackTrace: st);
     }
   }
 

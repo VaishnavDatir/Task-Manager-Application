@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 enum TaskPriority { low, medium, high }
 
 class TaskModel {
-  final String objectId; // Back4App unique ID
+  final String objectId;
   final String? taskId;
   final String title;
   final String description;
@@ -12,7 +12,7 @@ class TaskModel {
   final String status;
   final DateTime createdAt;
   final DateTime? updatedAt;
-  final String? createdBy; 
+  final String? createdBy;
 
   TaskModel({
     required this.objectId,
@@ -27,7 +27,7 @@ class TaskModel {
     this.createdBy,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  // 🧩 Copy with
+  // 🔁 CopyWith
   TaskModel copyWith({
     String? objectId,
     String? taskId,
@@ -54,52 +54,49 @@ class TaskModel {
     );
   }
 
-  //  To JSON (for Back4App)
+  // 🔧 Convert to JSON for Back4App
   Map<String, dynamic> toJson({String? userId}) {
-    final map = {
+    return {
       "taskId": taskId,
       "title": title,
       "description": description,
       "dueDate": {"__type": "Date", "iso": dueDate.toUtc().toIso8601String()},
       "priority": describeEnum(priority),
       "status": status,
+      if (userId != null || createdBy != null)
+        "createdBy": {
+          "__type": "Pointer",
+          "className": "_User",
+          "objectId": userId ?? createdBy,
+        },
     };
-
-    if (userId != null) {
-      map["createdBy"] = {
-        "__type": "Pointer",
-        "className": "_User",
-        "objectId": userId,
-      };
-    }
-
-    return map;
   }
 
-
-  // 🧩 From JSON (for Back4App)
+  // 🔄 From JSON (safe parsing)
   factory TaskModel.fromJson(Map<dynamic, dynamic> json) {
-    TaskPriority parsePriority(String? s) {
-      switch (s?.toLowerCase()) {
-        case 'low':
-          return TaskPriority.low;
-        case 'medium':
-          return TaskPriority.medium;
-        default:
-          return TaskPriority.high;
-      }
+    TaskPriority parsePriority(dynamic value) {
+      if (value == null) return TaskPriority.medium;
+
+      final s = value.toString().toLowerCase();
+      if (s == "low") return TaskPriority.low;
+      if (s == "medium") return TaskPriority.medium;
+      return TaskPriority.high;
     }
 
-    DateTime parseDate(dynamic val) {
-      if (val == null) return DateTime.now();
-      if (val is String) return DateTime.parse(val);
-      if (val is Map && val["iso"] != null) return DateTime.parse(val["iso"]);
+    DateTime parseDate(dynamic value) {
+      try {
+        if (value == null) return DateTime.now();
+        if (value is String) return DateTime.parse(value);
+        if (value is Map && value["iso"] != null) {
+          return DateTime.parse(value["iso"]).toLocal();
+        }
+      } catch (_) {}
       return DateTime.now();
     }
 
     return TaskModel(
       objectId: json["objectId"] ?? "",
-      taskId: json["taskId"] ?? "",
+      taskId: json["taskId"],
       title: json["title"] ?? "",
       description: json["description"] ?? "",
       dueDate: parseDate(json["dueDate"]),
@@ -109,8 +106,7 @@ class TaskModel {
       updatedAt: json["updatedAt"] != null
           ? parseDate(json["updatedAt"])
           : null,
-      createdBy: json["createdBy"]?["objectId"] ?? "",
+      createdBy: json["createdBy"]?["objectId"],
     );
   }
-
 }
